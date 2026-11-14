@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0F3325">
+<title>Fidara Admin</title>
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="icon" type="image/png" href="/icons/icon-192.png">
+<style>
+:root{--deep:#0F3325;--forest:#1F5C45;--leaf:#2F7A5C;--sun:#FFC93C;--red:#C8381E;--cream:#F6F2E9;--paper:#FFFDF8;--line:#E2DCCB;--muted:#55705F;--mint:#E7EFE9;--pale:#CFE3D8;--ink:#12261D;--r:18px;--shadow:0 1px 2px rgba(15,51,37,.06),0 10px 28px -14px rgba(15,51,37,.25)}
+*{box-sizing:border-box}
+html{color-scheme:light;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:'Nunito Sans',system-ui,sans-serif;font-size:16px;line-height:1.5}
+button,input,select{font:inherit;color:inherit}
+button{font-family:'Poppins',sans-serif;cursor:pointer}
+button:disabled{opacity:.45;cursor:default}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px;border-radius:6px}
+[hidden]{display:none!important}
+a{color:var(--forest)}
+h1,h2,h3{font-family:'Poppins',sans-serif;margin:0}
+.eyebrow{font-family:'Poppins',sans-serif;font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--leaf)}
+.muted{color:var(--muted)}
+.sr{position:absolute;left:-9999px}
+
+/* buttons + chips */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:9px 18px;font-weight:700;font-size:14px;min-height:40px;text-decoration:none;border:2px solid var(--deep);background:#fff;color:var(--deep);transition:transform .15s,background .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.sun{background:var(--sun);border-color:var(--sun)}
+.btn.green{background:var(--forest);border-color:var(--forest);color:#fff}
+.btn.small{padding:6px 14px;font-size:13px;min-height:34px}
+.btn.ghost{background:transparent;border-color:rgba(255,255,255,.35);color:#fff}
+.btn.ghost:hover{background:rgba(255,255,255,.1)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:#fff;border:2px solid #CBD3C7;border-radius:999px;padding:6px 14px;font-weight:600;font-size:13.5px;min-height:38px}
+.chip[aria-pressed=true]{background:var(--forest);border-color:var(--forest);color:#fff}
+.chip small{opacity:.7;margin-left:4px;font-weight:600}
+.in{padding:9px 14px;border:2px solid #CBD3C7;border-radius:999px;background:#fff;min-height:42px;font-size:15px;min-width:220px;flex:1 1 220px}
+.in:focus{outline:none;border-color:var(--forest);box-shadow:0 0 0 4px rgba(47,122,92,.18)}
+select.in{flex:0 0 auto;min-width:0;padding-right:30px}
+
+/* login */
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(800px 500px at 80% -10%,rgba(255,201,60,.22),transparent 60%),linear-gradient(160deg,#164A37,#0F3325 70%)}
+.login form{background:var(--paper);border-radius:26px;padding:32px;width:min(400px,100%);box-shadow:0 30px 60px -20px rgba(0,0,0,.5)}
+.login h1{font-weight:800;font-size:28px;margin:14px 0 4px;letter-spacing:-.02em}
+.login label{display:block;font-family:'Poppins',sans-serif;font-weight:600;font-size:14px;margin:20px 0 6px}
+.login .in{width:100%;border-radius:14px;min-height:50px}
+.login .err{background:#FDE7E2;color:#8A1F0C;border-radius:12px;padding:10px 14px;font-weight:700;margin-top:14px}
+
+/* shell */
+.app{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}
+.side{background:var(--deep);color:#fff;padding:22px 16px;display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Poppins',sans-serif;font-weight:800;font-size:22px;padding:2px 10px 18px}
+.brand small{font-weight:600;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--pale);display:block;line-height:1;margin-top:3px}
+.nav{display:flex;flex-direction:column;gap:4px}
+.nav button{display:flex;align-items:center;gap:12px;background:transparent;border:0;color:var(--pale);font-weight:600;font-size:15px;padding:11px 12px;border-radius:14px;text-align:left}
+.nav button:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav button[aria-current=page]{background:var(--sun);color:var(--deep)}
+.nav svg{flex:none}
+.nav .count{margin-left:auto;background:var(--red);color:#fff;border-radius:999px;font-size:12px;padding:1px 9px;font-weight:700}
+.side .sp{flex:1}
+.side .small-note{font-size:12.5px;color:var(--pale);padding:0 10px}
+.side .tools{display:grid;gap:8px;padding:10px 0}
+.main{padding:clamp(18px,3vw,36px);min-width:0}
+.top{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:end;justify-content:space-between;margin-bottom:22px}
+.top h1{font-weight:800;font-size:clamp(26px,3.6vw,36px);letter-spacing:-.02em;line-height:1.1}
+.top .sub{color:var(--muted);margin-top:2px;font-size:15px}
+@media(max-width:900px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;padding:12px 14px;gap:8px}
+  .brand{padding:0;font-size:20px}.brand small{display:none}
+  .nav{flex-direction:row;order:3;width:100%;overflow-x:auto}
+  .nav button{padding:9px 14px;white-space:nowrap}
+  .side .sp,.side .small-note{display:none}
+  .side .tools{display:flex;padding:0;margin-left:auto}
+  .side .tools .btn{padding:6px 12px;font-size:13px;min-height:34px}
+  .side .tools .csv{display:none}
+}
+
+/* cards */
+.card{min-width:0;background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--shadow)}
+.card h2{font-size:17px;margin-bottom:2px}
+.card .hd{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline;justify-content:space-between;margin-bottom:14px}
+.card .hd span{color:var(--muted);font-size:14px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:18px}
+.tile{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;box-shadow:var(--shadow)}
+.tile .k{font-family:'Poppins',sans-serif;font-weight:700;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.tile .v{font-family:'Poppins',sans-serif;font-weight:800;font-size:34px;line-height:1.15;margin-top:4px;letter-spacing:-.02em}
+.tile .s{font-size:13.5px;color:var(--muted)}
+.tile.alert{background:var(--sun);border-color:var(--sun)}.tile.alert .k,.tile.alert .s{color:var(--deep)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px;margin-bottom:18px}
+.grid2.even{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+@media(max-width:1000px){.grid2{grid-template-columns:minmax(0,1fr)}}
+
+/* charts */
+.chart{position:relative}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart .gl{stroke:#E8E3D3;stroke-width:1}
+.chart .ax{font-family:'Nunito Sans',sans-serif;font-size:11px;fill:#6B8576}
+.chart .bar{fill:var(--forest);transition:fill .12s}
+.chart .col:hover .bar,.chart .col:focus .bar{fill:#2F7A5C}
+.chart .hit{fill:transparent;cursor:default}
+.chart .col:focus{outline:none}
+.chart .col:focus .hit{stroke:var(--sun);stroke-width:2}
+.tip{position:absolute;pointer-events:none;background:var(--deep);color:#fff;border-radius:10px;padding:6px 11px;font-size:13px;white-space:nowrap;transform:translate(-50%,-110%);z-index:5;box-shadow:var(--shadow)}
+.tip b{font-family:'Poppins',sans-serif}
+.toggle{background:transparent;border:0;color:var(--forest);font-weight:700;font-size:13px;text-decoration:underline;padding:2px 4px}
+.hbars{display:grid;gap:9px}
+.hb{display:grid;grid-template-columns:minmax(110px,150px) 1fr 64px;gap:10px;align-items:center;font-size:14px}
+.hb .lab{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hb .lab i{font-style:normal;font-family:'Poppins',sans-serif;font-weight:700;color:var(--muted);margin-right:6px}
+.hb .tr{height:12px;border-radius:999px;background:var(--mint);overflow:hidden}
+.hb .tr i{display:block;height:100%;background:var(--forest);border-radius:0 6px 6px 0}
+.hb .val{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;font-family:'Poppins',sans-serif;font-size:13px}
+
+/* lists + tables */
+.list{display:grid;grid-template-columns:minmax(0,1fr);gap:2px}
+.grid2>*{min-width:0}
+.li{display:flex;gap:12px;align-items:center;padding:10px 6px;border-radius:12px;border:0;background:transparent;text-align:left;width:100%}
+button.li:hover{background:var(--mint)}
+.li .av{flex:none;width:38px;height:38px;border-radius:50%;background:var(--forest);color:var(--sun);display:flex;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;font-weight:800;font-size:14px}
+.li .tx{flex:1;min-width:0}
+.li .tx b{display:block;font-family:'Poppins',sans-serif;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li .tx span{font-size:13.5px;color:var(--muted);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.empty{color:var(--muted);padding:26px 6px;text-align:center}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.tw{overflow-x:auto;background:var(--paper);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;min-width:760px}
+th{font-family:'Poppins',sans-serif;font-weight:700;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:13px 16px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:13px 16px;border-bottom:1px solid #EFEADB;vertical-align:middle;font-size:15px}
+tbody tr:last-child td{border-bottom:0}
+tbody tr.click{cursor:pointer}
+tbody tr.click:hover td{background:#F6FAF7}
+td .nm{font-family:'Poppins',sans-serif;font-weight:700;font-size:14.5px;display:block}
+td .em{color:var(--muted);font-size:13.5px;display:block}
+.pg{display:flex;align-items:center;gap:10px;font-family:'Poppins',sans-serif;font-weight:700;font-size:13px;white-space:nowrap}
+.pg .t{width:80px;height:8px;border-radius:999px;background:var(--mint);overflow:hidden}
+.pg .t i{display:block;height:100%;background:var(--sun);border-radius:999px}
+.pg.full .t i{background:var(--forest)}
+.b{display:inline-block;border-radius:999px;padding:2px 11px;font-family:'Poppins',sans-serif;font-weight:700;font-size:12px;background:var(--mint);color:var(--forest);white-space:nowrap}
+.b.sun{background:var(--sun);color:var(--deep)}.b.red{background:#FDE7E2;color:#8A1F0C}.b.gray{background:#EEEADD;color:#6B7A70}
+td[data-l="Course"]{white-space:nowrap}
+.note{max-width:340px;color:var(--ink);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:14.5px}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:800px){
+  table{min-width:0}thead{display:none}
+  tbody tr{display:block;padding:14px 16px;border-bottom:1px solid var(--line)}
+  tbody tr:last-child{border-bottom:0}
+  td{display:flex;justify-content:space-between;gap:14px;border:0;padding:5px 0;text-align:right}
+  td::before{content:attr(data-l);font-family:'Poppins',sans-serif;font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding-top:3px}
+  td.first{display:block;text-align:left;padding-bottom:8px}td.first::before{display:none}
+  .note{max-width:none;text-align:right}
+  td>div{text-align:right;min-width:0}
+  td>div .acts{justify-content:flex-end}
+}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(15,51,37,.45);z-index:20}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(520px,100%);background:var(--paper);z-index:21;box-shadow:-20px 0 50px -20px rgba(0,0,0,.4);overflow:auto;padding:24px;animation:slide .22s ease}
+@keyframes slide{from{transform:translateX(30px);opacity:0}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.drawer .x{position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:50%;border:0;background:var(--mint);font-size:22px;line-height:1}
+.drawer h2{font-size:24px;font-weight:800;letter-spacing:-.02em;padding-right:44px}
+.dl{display:grid;grid-template-columns:130px 1fr;gap:10px 14px;margin:18px 0}
+.dl dt{font-family:'Poppins',sans-serif;font-weight:700;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.dl dd{margin:0;overflow-wrap:anywhere}
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin:8px 0 20px;padding:0;list-style:none;font-size:14.5px}
+.steps li{display:flex;gap:8px;align-items:center}
+.steps i{flex:none;width:22px;height:22px;border-radius:50%;background:var(--mint);color:var(--muted);display:flex;align-items:center;justify-content:center;font-style:normal;font-size:11px;font-weight:700;font-family:'Poppins',sans-serif}
+.steps .d i{background:var(--sun);color:var(--deep)}
+.rv{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:8px;background:#fff}
+h3.sec{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:22px 0 8px}
+.sys{display:grid;gap:10px}
+.sys div{display:flex;justify-content:space-between;gap:14px;align-items:center;font-size:15px;border-bottom:1px solid #EFEADB;padding-bottom:9px}
+.sys div:last-child{border:0;padding:0}
+.sys small{display:block;color:var(--muted);font-size:13px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--deep);color:#fff;font-family:'Poppins',sans-serif;font-weight:600;border-radius:999px;padding:11px 22px;z-index:40;box-shadow:var(--shadow)}
+</style>
+</head>
+<body>
+
+<!-- ============ login ============ -->
+<div class="login" id="login" hidden>
+  <form id="loginForm">
+    <svg width="44" height="44" viewBox="0 0 64 64" fill="#1F5C45" aria-hidden="true"><ellipse cx="14" cy="26" rx="7" ry="9"/><ellipse cx="27" cy="14" rx="7" ry="10"/><ellipse cx="42" cy="14" rx="7" ry="10"/><ellipse cx="53" cy="27" rx="7" ry="9"/><path d="M32 30c-9 0-17 9-17 17 0 6 5 9 10 8 4-1 5-2 7-2s3 1 7 2c5 1 10-2 10-8 0-8-8-17-17-17z"/></svg>
+    <h1>Fidara admin</h1>
+    <div class="muted">Sign-ups, progress and video reviews.</div>
+    <label for="pw">Password</label>
+    <input class="in" id="pw" type="password" autocomplete="current-password" autofocus>
+    <div id="loginErr" role="alert"></div>
+    <button class="btn sun" style="width:100%;margin-top:18px;min-height:50px;font-size:16px" type="submit">Sign in</button>
+  </form>
+</div>
+
+<!-- ============ app ============ -->
+<div class="app" id="app" hidden>
+  <aside class="side">
+    <div class="brand"><svg width="30" height="30" viewBox="0 0 64 64" fill="#FFC93C" aria-hidden="true"><ellipse cx="14" cy="26" rx="7" ry="9"/><ellipse cx="27" cy="14" rx="7" ry="10"/><ellipse cx="42" cy="14" rx="7" ry="10"/><ellipse cx="53" cy="27" rx="7" ry="9"/><path d="M32 30c-9 0-17 9-17 17 0 6 5 9 10 8 4-1 5-2 7-2s3 1 7 2c5 1 10-2 10-8 0-8-8-17-17-17z"/></svg><div>Fidara<small>Admin</small></div></div>
+    <nav class="nav" aria-label="Sections">
+      <button data-v="overview" aria-current="page"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Overview</button>
+      <button data-v="customers"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3.5-7 7-7s7 3 7 7"/><path d="M17 4a4 4 0 010 8M22 21c0-3-2-5.5-5-6.5"/></svg>Customers<span class="count" id="nCust" style="background:rgba(255,255,255,.18)"></span></button>
+      <button data-v="reviews"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3"/></svg>Video reviews<span class="count" id="nWait" hidden></span></button>
+    </nav>
+    <div class="sp"></div>
+    <div class="small-note" id="updated"></div>
+    <div class="tools">
+      <a class="btn ghost small csv" href="/admin/registrations.csv" download>Download customers (CSV)</a>
+      <a class="btn ghost small csv" href="/admin/reviews.csv" download>Download reviews (CSV)</a>
+      <button class="btn ghost small" id="bRefresh">Refresh</button>
+      <button class="btn ghost small" id="bOut">Sign out</button>
+    </div>
+  </aside>
+
+  <main class="main" id="main">
+    <!-- overview -->
+    <section id="vOverview">
+      <div class="top"><div><div class="eyebrow">Overview</div><h1>How Fidara is doing</h1><div class="sub" id="ovSub"></div></div></div>
+      <div class="tiles" id="tiles"></div>
+      <div class="grid2">
+        <div class="card"><div class="hd"><h2>New sign-ups</h2><span>Last 30 days <button class="toggle" data-tg="signups">Table view</button></span></div>
+          <div class="chart" id="chSignups"></div><div id="tbSignups" hidden></div></div>
+        <div class="card"><div class="hd"><h2>Course completion</h2><span>Customers who passed each course <button class="toggle" data-tg="comp">Table view</button></span></div>
+          <div id="chComp"></div><div id="tbComp" hidden></div></div>
+      </div>
+      <div class="grid2 even">
+        <div class="card"><div class="hd"><h2>Waiting for Charlotte</h2><span id="waitSub"></span></div><div class="list" id="listWait"></div></div>
+        <div class="card"><div class="hd"><h2>Recent sign-ups</h2></div><div class="list" id="listRecent"></div></div>
+        <div class="card"><div class="hd"><h2>System</h2><span>What is switched on</span></div><div class="sys" id="sys"></div></div>
+      </div>
+    </section>
+
+    <!-- customers -->
+    <section id="vCustomers" hidden>
+      <div class="top"><div><div class="eyebrow">Customers</div><h1>Everyone who registered</h1><div class="sub" id="custSub"></div></div></div>
+      <div class="toolbar">
+        <input class="in" id="cq" type="search" placeholder="Search name, email, puppy, receipt or ZIP" aria-label="Search customers">
+        <select class="in" id="csort" aria-label="Sort"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="name">Name A to Z</option><option value="progress">Most progress</option></select>
+      </div>
+      <div class="chips" id="cchips" style="margin-bottom:14px"></div>
+      <div class="tw"><table><thead><tr><th>Customer</th><th>Puppy</th><th>Progress</th><th>Video review</th><th>Estoy Aquí</th><th>Registered</th></tr></thead><tbody id="ctb"></tbody></table><div class="empty" id="cEmpty" hidden></div></div>
+    </section>
+
+    <!-- reviews -->
+    <section id="vReviews" hidden>
+      <div class="top"><div><div class="eyebrow">Video reviews</div><h1>Videos sent to Charlotte</h1><div class="sub" id="revSub"></div></div></div>
+      <div class="toolbar"><input class="in" id="rq" type="search" placeholder="Search customer, puppy or note" aria-label="Search reviews"></div>
+      <div class="chips" id="rchips" style="margin-bottom:14px"></div>
+      <div class="tw"><table><thead><tr><th>Received</th><th>Customer</th><th>Course</th><th>What is hard</th><th>Video</th><th>Status</th></tr></thead><tbody id="rtb"></tbody></table><div class="empty" id="rEmpty" hidden></div></div>
+    </section>
+  </main>
+</div>
+
+<div id="drawerHost"></div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="/lessons.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const LN = (window.FIDARA_LESSONS || []).map((l) => l.n);
+let D = null, view = 'overview', cf = 'all', rf = 'all', openKey = null, ticker;
+const fmtDT = (iso) => new Date(iso).toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+const fmtD = (iso) => new Date(iso).toLocaleDateString([], { month: 'short', day: 'numeric' });
+function ago(iso) { const s = (Date.now() - new Date(iso)) / 1000; if (s < 90) return 'just now'; if (s < 3600) return Math.round(s / 60) + ' min ago'; if (s < 86400) return Math.round(s / 3600) + ' h ago'; if (s < 86400 * 14) { const d = Math.round(s / 86400); return d + (d === 1 ? ' day ago' : ' days ago'); } return fmtD(iso); }
+const initials = (n) => String(n || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
+const mmss = (s) => (s ? Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0') : '');
+function toast(msg) { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast.h); toast.h = setTimeout(() => { t.hidden = true; }, 2400); }
+
+/* ---------- auth + data ---------- */
+function showLogin() { $('app').hidden = true; $('login').hidden = false; $('pw').focus(); }
+async function load(quiet) {
+  const r = await fetch('/admin/api/data', { credentials: 'same-origin' });
+  if (r.status === 401) { showLogin(); return false; }
+  if (r.status === 404) { document.body.innerHTML = '<p style="padding:30px;font-family:system-ui">The admin dashboard is switched off. Set ADMIN_KEY in the server settings.</p>'; return false; }
+  if (!r.ok) { if (!quiet) toast('Could not load the data.'); return false; }
+  D = await r.json(); D.byKey = {}; D.reviews.forEach((x) => { (D.byKey[x.key] = D.byKey[x.key] || []).push(x); });
+  $('login').hidden = true; $('app').hidden = false; render(); return true;
+}
+$('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault(); $('loginErr').innerHTML = '';
+  const r = await fetch('/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: $('pw').value }), credentials: 'same-origin' });
+  if (r.ok) { $('pw').value = ''; load(); } else { const j = await r.json().catch(() => ({})); $('loginErr').innerHTML = '<div class="err">' + esc(j.error || 'Could not sign in.') + '</div>'; }
+});
+$('bOut').onclick = async () => { await fetch('/admin/logout', { method: 'POST', credentials: 'same-origin' }); D = null; showLogin(); };
+$('bRefresh').onclick = async () => { if (await load()) toast('Updated'); };
+document.querySelectorAll('.nav button').forEach((b) => b.addEventListener('click', () => go(b.dataset.v)));
+function go(v) { view = v; closeDrawer(); render(); window.scrollTo(0, 0); }
+
+/* ---------- render ---------- */
+function render() {
+  if (!D) return;
+  document.querySelectorAll('.nav button').forEach((b) => b.setAttribute('aria-current', b.dataset.v === view ? 'page' : 'false'));
+  ['overview', 'customers', 'reviews'].forEach((v) => { $('v' + v[0].toUpperCase() + v.slice(1)).hidden = v !== view; });
+  const waiting = D.reviews.filter((r) => r.status !== 'replied').length;
+  $('nCust').textContent = D.customers.length; $('nWait').textContent = waiting; $('nWait').hidden = !waiting;
+  $('updated').textContent = 'Updated ' + new Date(D.now).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  if (view === 'overview') renderOverview(); else if (view === 'customers') renderCustomers(); else renderReviews();
+  if (openKey) drawCustomer(openKey, true);
+}
+
+function renderOverview() {
+  const cs = D.customers, n = cs.length, wk = Date.now() - 7 * 864e5;
+  const new7 = cs.filter((c) => new Date(c.at) > wk).length, started = cs.filter((c) => c.done.length > 0).length, grads = cs.filter((c) => c.done.length >= 10).length;
+  const opt = cs.filter((c) => c.estoyAqui).length, rv = D.reviews, waiting = rv.filter((r) => r.status !== 'replied').length;
+  const pct = (x) => (n ? Math.round((x / n) * 100) + '% of customers' : '');
+  $('ovSub').textContent = n ? n + ' customer' + (n === 1 ? '' : 's') + ' so far.' : 'No one has registered yet. New sign-ups will appear here.';
+  const T = (k, v, s, cls) => '<div class="tile ' + (cls || '') + '"><div class="k">' + k + '</div><div class="v">' + v + '</div><div class="s">' + esc(s) + '</div></div>';
+  $('tiles').innerHTML = T('Registered', n, new7 + ' in the last 7 days') + T('Started learning', started, pct(started)) + T('Finished all 10', grads, pct(grads)) +
+    T('Video reviews', rv.length, rv.length ? 'sent by customers' : 'none yet') + T('Waiting for Charlotte', waiting, waiting ? 'need a reply' : 'all answered', waiting ? 'alert' : '') + T('Estoy Aquí opt-ins', opt, pct(opt));
+  signupChart(); compChart();
+  const w = rv.filter((r) => r.status !== 'replied').slice().reverse();
+  $('waitSub').textContent = waiting ? waiting + ' waiting, oldest first' : '';
+  $('listWait').innerHTML = w.length ? w.slice(0, 5).map((r) => '<button class="li" data-rv="' + esc(r.key) + '"><span class="av">' + esc(initials(r.name)) + '</span><span class="tx"><b>' + esc(r.name || r.email) + ' · ' + esc(r.dog || 'puppy') + '</b><span>Course ' + r.lesson + ', ' + esc(r.lessonName) + ' · ' + ago(r.at) + '</span></span><span class="b sun">Open</span></button>').join('') : '<div class="empty">Nothing waiting. All reviews are answered.</div>';
+  const rc = cs.slice().sort((a, b) => b.at.localeCompare(a.at)).slice(0, 5);
+  $('listRecent').innerHTML = rc.length ? rc.map((c) => '<button class="li" data-c="' + esc(c.key) + '"><span class="av">' + esc(initials(c.name)) + '</span><span class="tx"><b>' + esc(c.name) + '</b><span>' + esc(c.dog) + ' · ' + esc(c.age) + ' · ' + ago(c.at) + '</span></span><span class="b">' + c.done.length + '/10</span></button>').join('') : '<div class="empty">No sign-ups yet.</div>';
+  const s = D.system, on = (v) => '<span class="b' + (v ? '' : ' gray') + '">' + (v ? 'On' : 'Off') + '</span>';
+  $('sys').innerHTML = '<div><span>Email sending' + (s.email ? '' : '<small>Off: customers do not get their personal link and no review emails go out.</small>') + '</span>' + on(s.email) + '</div>' +
+    '<div><span>Review emails go to<small>' + esc(s.reviewTo) + '</small></span></div><div><span>Google Sheet copy</span>' + on(s.sheet) + '</div><div><span>Estoy Aquí email</span>' + on(s.estoyAquiEmail) + '</div>' +
+    '<div><span>Videos kept for<small>then deleted automatically</small></span><b>' + s.retentionDays + ' days</b></div><div><span>Reviews per box</span><b>' + s.reviewsPerBox + '</b></div><div><span>Site address<small>' + esc(s.publicUrl) + '</small></span></div>';
+}
+/* sign-ups per day: one series, so one hue and no legend; the table view is the accessible twin */
+function dayKey(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function signupChart() {
+  const days = [], cnt = {}; D.customers.forEach((c) => { const k = dayKey(new Date(c.at)); cnt[k] = (cnt[k] || 0) + 1; });
+  for (let i = 29; i >= 0; i--) { const d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() - i); days.push({ d, k: dayKey(d), n: cnt[dayKey(d)] || 0 }); }
+  const W = 640, H = 330, L = 30, R = 6, Tp = 12, B = 26, max = Math.max(4, Math.ceil(Math.max(...days.map((x) => x.n)) / 2) * 2), pw = (W - L - R) / 30, bw = Math.min(14, pw * 0.6), y = (v) => Tp + (H - Tp - B) * (1 - v / max);
+  let g = '';
+  [0, max / 2, max].forEach((v) => { g += '<line class="gl" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(v) + '" y2="' + y(v) + '"/><text class="ax" x="' + (L - 6) + '" y="' + (y(v) + 4) + '" text-anchor="end">' + v + '</text>'; });
+  let bars = '';
+  days.forEach((x, i) => {
+    const cx = L + pw * i + pw / 2, h = (H - Tp - B) * (x.n / max), top = y(x.n), r = Math.min(4, h / 2);
+    const path = x.n ? '<path class="bar" d="M' + (cx - bw / 2) + ',' + (H - B) + 'V' + (top + r) + 'Q' + (cx - bw / 2) + ',' + top + ' ' + (cx - bw / 2 + r) + ',' + top + 'H' + (cx + bw / 2 - r) + 'Q' + (cx + bw / 2) + ',' + top + ' ' + (cx + bw / 2) + ',' + (top + r) + 'V' + (H - B) + 'Z"/>' : '';
+    bars += '<g class="col" tabindex="0" data-i="' + i + '" role="img" aria-label="' + esc(fmtD(x.d.toISOString()) + ': ' + x.n + ' sign-ups') + '">' + path + '<rect class="hit" x="' + (L + pw * i) + '" y="' + Tp + '" width="' + pw + '" height="' + (H - Tp - B) + '"/></g>';
+  });
+  const lab = (i, a) => '<text class="ax" x="' + (L + pw * i + pw / 2) + '" y="' + (H - 6) + '" text-anchor="' + a + '">' + esc(fmtD(days[i].d.toISOString())) + '</text>';
+  $('chSignups').innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="group" aria-label="New sign-ups per day, last 30 days">' + g + bars + lab(0, 'start') + lab(14, 'middle') + lab(29, 'end') + '</svg>';
+  const tip = (e) => { const col = e.target.closest('.col'); let t = $('chSignups').querySelector('.tip'); if (!col) { if (t) t.remove(); return; } const x = days[+col.dataset.i];
+    if (!t) { t = document.createElement('div'); t.className = 'tip'; $('chSignups').appendChild(t); }
+    const bb = col.getBoundingClientRect(), pb = $('chSignups').getBoundingClientRect(); t.style.left = (bb.left - pb.left + bb.width / 2) + 'px'; t.style.top = Math.max(18, y(x.n) / H * pb.height) + 'px';
+    t.innerHTML = '<b>' + x.n + '</b> sign-up' + (x.n === 1 ? '' : 's') + ' · ' + esc(fmtD(x.d.toISOString())); };
+  const ch = $('chSignups'); ch.onmouseover = tip; ch.onfocusin = tip; ch.onmouseleave = () => { const t = ch.querySelector('.tip'); if (t) t.remove(); }; ch.onfocusout = ch.onmouseleave;
+  $('tbSignups').innerHTML = '<div class="tw" style="box-shadow:none;max-height:260px"><table style="min-width:0"><thead><tr><th>Day</th><th>Sign-ups</th></tr></thead><tbody>' + days.slice().reverse().map((x) => '<tr><td>' + esc(fmtD(x.d.toISOString())) + '</td><td>' + x.n + '</td></tr>').join('') + '</tbody></table></div>';
+}
+function compChart() {
+  const n = D.customers.length;
+  const rows = LN.map((name, i) => { const c = D.customers.filter((x) => x.done.includes(i + 1)).length; return { i: i + 1, name, c, p: n ? Math.round((c / n) * 100) : 0 }; });
+  $('chComp').innerHTML = '<div class="hbars">' + rows.map((r) => '<div class="hb" title="' + esc(r.name + ': ' + r.c + ' of ' + n) + '"><div class="lab"><i>' + r.i + '</i>' + esc(r.name) + '</div><div class="tr"><i style="width:' + r.p + '%"></i></div><div class="val">' + r.c + ' · ' + r.p + '%</div></div>').join('') + '</div>';
+  $('tbComp').innerHTML = '<div class="tw" style="box-shadow:none"><table style="min-width:0"><thead><tr><th>Course</th><th>Customers</th><th>Share</th></tr></thead><tbody>' + rows.map((r) => '<tr><td>' + r.i + '. ' + esc(r.name) + '</td><td>' + r.c + '</td><td>' + r.p + '%</td></tr>').join('') + '</tbody></table></div>';
+}
+document.querySelectorAll('.toggle').forEach((b) => b.addEventListener('click', () => {
+  const k = b.dataset.tg, ch = k === 'signups' ? $('chSignups') : $('chComp'), tb = k === 'signups' ? $('tbSignups') : $('tbComp'), showT = tb.hidden;
+  tb.hidden = !showT; ch.hidden = showT; b.textContent = showT ? 'Chart view' : 'Table view';
+}));
+$('main').addEventListener('click', (e) => {
+  const c = e.target.closest('[data-c]'); if (c) { openKey = c.dataset.c; drawCustomer(openKey); return; }
+  const r = e.target.closest('[data-rv]'); if (r) { rf = 'new'; go('reviews'); }
+});
+
+/* ---------- customers ---------- */
+const CF = [['all', 'All'], ['active', 'Learning'], ['notstarted', 'Not started'], ['finished', 'Finished all 10'], ['reviewed', 'Sent a review'], ['optin', 'Estoy Aquí opt-in'], ['marketing', 'Offers & news opt-in']];
+const cMatch = { all: () => true, active: (c) => c.done.length > 0 && c.done.length < 10, notstarted: (c) => !c.done.length, finished: (c) => c.done.length >= 10, reviewed: (c) => c.reviewUsed > 0, optin: (c) => c.estoyAqui, marketing: (c) => c.marketingOptIn };
+function renderCustomers() {
+  const q = $('cq').value.trim().toLowerCase(), srt = $('csort').value;
+  $('cchips').innerHTML = CF.map(([k, l]) => '<button class="chip" data-f="' + k + '" aria-pressed="' + (cf === k) + '">' + l + '<small>' + D.customers.filter(cMatch[k]).length + '</small></button>').join('');
+  let a = D.customers.filter(cMatch[cf]).filter((c) => !q || [c.name, c.email, c.dog, c.receipt, c.zip, c.age].join(' ').toLowerCase().includes(q));
+  a.sort(srt === 'name' ? (x, y) => x.name.localeCompare(y.name) : srt === 'old' ? (x, y) => x.at.localeCompare(y.at) : srt === 'progress' ? (x, y) => y.done.length - x.done.length || y.at.localeCompare(x.at) : (x, y) => y.at.localeCompare(x.at));
+  $('custSub').textContent = a.length + ' of ' + D.customers.length + ' shown. Click a row for the full details.';
+  $('ctb').innerHTML = a.map((c) => '<tr class="click" tabindex="0" data-c="' + esc(c.key) + '"><td class="first"><span class="nm">' + esc(c.name) + '</span><span class="em">' + esc(c.email) + '</span></td>' +
+    '<td data-l="Puppy"><div><span class="nm">' + esc(c.dog) + '</span><span class="em">' + esc(c.age) + '</span></div></td>' +
+    '<td data-l="Progress"><span class="pg' + (c.done.length >= 10 ? ' full' : '') + '"><span class="t"><i style="width:' + c.done.length * 10 + '%"></i></span>' + c.done.length + '/10</span></td>' +
+    '<td data-l="Video review">' + (c.reviewUsed ? '<span class="b sun">Course ' + c.reviewUsed + '</span>' : '<span class="muted">Not used</span>') + '</td>' +
+    '<td data-l="Estoy Aquí">' + (c.estoyAqui ? '<span class="b">Yes</span>' : '<span class="b gray">No</span>') + '</td>' +
+    '<td data-l="Registered" title="' + esc(fmtDT(c.at)) + '">' + esc(ago(c.at)) + '</td></tr>').join('');
+  $('cEmpty').hidden = a.length > 0; $('cEmpty').textContent = D.customers.length ? 'No customers match.' : 'No one has registered yet.';
+}
+$('cq').addEventListener('input', renderCustomers); $('csort').addEventListener('change', renderCustomers);
+$('cchips').addEventListener('click', (e) => { const b = e.target.closest('[data-f]'); if (b) { cf = b.dataset.f; renderCustomers(); } });
+$('ctb').addEventListener('keydown', (e) => { if (e.key === 'Enter') { const r = e.target.closest('[data-c]'); if (r) { openKey = r.dataset.c; drawCustomer(openKey); } } });
+
+/* ---------- reviews ---------- */
+const RF = [['all', 'All'], ['new', 'Waiting for reply'], ['replied', 'Replied']];
+function renderReviews() {
+  const q = $('rq').value.trim().toLowerCase(), isW = (r) => r.status !== 'replied';
+  $('rchips').innerHTML = RF.map(([k, l]) => '<button class="chip" data-f="' + k + '" aria-pressed="' + (rf === k) + '">' + l + '<small>' + D.reviews.filter((r) => k === 'all' || (k === 'new') === isW(r)).length + '</small></button>').join('');
+  const a = D.reviews.filter((r) => rf === 'all' || (rf === 'new') === isW(r)).filter((r) => !q || [r.name, r.email, r.dog, r.note, r.lessonName].join(' ').toLowerCase().includes(q));
+  $('revSub').textContent = D.reviews.length ? 'Reply by email, then mark the video as replied so the team can see what is left.' : 'No videos yet. They will show up here as customers send them.';
+  $('rtb').innerHTML = a.map((r) => '<tr><td class="first" title="' + esc(fmtDT(r.at)) + '"><span class="nm">' + esc(ago(r.at)) + '</span><span class="em">' + esc(fmtDT(r.at)) + '</span></td>' +
+    '<td data-l="Customer"><div><span class="nm">' + esc(r.name || '(no name)') + ' · ' + esc(r.dog || 'puppy') + '</span><span class="em">' + esc(r.email) + '</span></div></td>' +
+    '<td data-l="Course"><span class="b sun">' + r.lesson + '</span> ' + esc(r.lessonName) + '</td>' +
+    '<td data-l="What is hard"><div class="note" title="' + esc(r.note) + '">' + (r.note ? esc(r.note) : '<span class="muted">(not said)</span>') + '</div></td>' +
+    '<td data-l="Video"><div>' + (r.available ? '<div class="acts"><a class="btn green small" href="' + esc(r.link) + '" target="_blank" rel="noopener">Watch</a></div><span class="em">' + [mmss(r.seconds), (r.bytes / 1048576).toFixed(1) + ' MB'].filter(Boolean).join(' · ') + '</span>' : '<span class="b gray">Deleted after ' + D.system.retentionDays + ' days</span>') + '</div></td>' +
+    '<td data-l="Status"><div class="acts"><span class="b ' + (isW(r) ? 'sun' : '') + '">' + (isW(r) ? 'Waiting' : 'Replied') + '</span><button class="btn small" data-st="' + esc(r.id) + '" data-to="' + (isW(r) ? 'replied' : 'new') + '">' + (isW(r) ? 'Mark replied' : 'Reopen') + '</button>' +
+    '<a class="btn small" href="mailto:' + esc(r.email) + '?subject=' + encodeURIComponent('Your Fidara video review (course ' + r.lesson + ': ' + r.lessonName + ')') + '">Email</a></div></td></tr>').join('');
+  $('rEmpty').hidden = a.length > 0; $('rEmpty').textContent = D.reviews.length ? 'Nothing matches.' : 'No videos yet.';
+}
+$('rq').addEventListener('input', renderReviews);
+$('rchips').addEventListener('click', (e) => { const b = e.target.closest('[data-f]'); if (b) { rf = b.dataset.f; renderReviews(); } });
+$('rtb').addEventListener('click', (e) => { const b = e.target.closest('[data-st]'); if (b) setStatus(b.dataset.st, b.dataset.to); });
+async function setStatus(id, status) {
+  const r = await fetch('/admin/api/review-status', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, status }), credentials: 'same-origin' });
+  if (r.status === 401) return showLogin();
+  if (!r.ok) return toast('Could not save. Try again.');
+  const x = D.reviews.find((v) => v.id === id); if (x) x.status = status; toast(status === 'replied' ? 'Marked as replied' : 'Reopened'); render();
+}
+
+/* ---------- customer drawer ---------- */
+function closeDrawer() { openKey = null; $('drawerHost').innerHTML = ''; }
+function drawCustomer(key, keepFocus) {
+  const c = D.customers.find((x) => x.key === key); if (!c) { closeDrawer(); return; }
+  const rv = D.byKey[key] || [], keep = keepFocus && document.querySelector('.drawer') ? document.querySelector('.drawer').scrollTop : 0;
+  $('drawerHost').innerHTML = '<div class="scrim" id="scrim"></div><aside class="drawer" role="dialog" aria-modal="true" aria-label="Customer details"><button class="x" id="dx" aria-label="Close">×</button>' +
+    '<div class="eyebrow">Customer</div><h2>' + esc(c.name) + '</h2><div class="muted">' + esc(c.email) + '</div>' +
+    '<div class="acts" style="margin-top:12px"><a class="btn green small" href="mailto:' + esc(c.email) + '">Email</a><button class="btn small" id="dcopy">Copy email</button></div>' +
+    '<dl class="dl"><dt>Puppy</dt><dd>' + esc(c.dog) + '</dd><dt>Puppy age</dt><dd>' + esc(c.age) + '</dd><dt>Receipt number</dt><dd>' + esc(c.receipt) + '</dd><dt>ZIP</dt><dd>' + esc(c.zip) + '</dd>' +
+    '<dt>Estoy Aquí</dt><dd>' + (c.estoyAqui ? 'Opted in' : 'No') + '</dd><dt>Agreed to terms</dt><dd>' + (c.consentAt ? esc(fmtDT(c.consentAt)) + (c.termsVersion ? ' · version ' + esc(c.termsVersion) : '') : '<span class="muted">Not recorded</span>') + '</dd><dt>Offers and news</dt><dd>' + (c.marketingOptIn ? 'Opted in to email' : 'No') + '</dd><dt>Registered</dt><dd>' + esc(fmtDT(c.at)) + '</dd></dl>' +
+    '<h3 class="sec">Progress · ' + c.done.length + ' of 10 courses</h3><ul class="steps">' + LN.map((n, i) => '<li class="' + (c.done.includes(i + 1) ? 'd' : '') + '"><i>' + (c.done.includes(i + 1) ? '✓' : i + 1) + '</i>' + esc(n) + '</li>').join('') + '</ul>' +
+    '<h3 class="sec">Video review</h3>' + (rv.length ? rv.map((r) => '<div class="rv"><b class="pop" style="font-family:Poppins">Course ' + r.lesson + ': ' + esc(r.lessonName) + '</b> <span class="b ' + (r.status === 'replied' ? '' : 'sun') + '">' + (r.status === 'replied' ? 'Replied' : 'Waiting') + '</span>' +
+      '<div class="muted" style="font-size:14px">' + esc(fmtDT(r.at)) + '</div><div style="margin:6px 0">' + (r.note ? esc(r.note) : '<span class="muted">(no note)</span>') + '</div>' +
+      '<div class="acts">' + (r.available ? '<a class="btn green small" href="' + esc(r.link) + '" target="_blank" rel="noopener">Watch</a>' : '<span class="b gray">Video deleted</span>') + '<button class="btn small" data-st="' + esc(r.id) + '" data-to="' + (r.status === 'replied' ? 'new' : 'replied') + '">' + (r.status === 'replied' ? 'Reopen' : 'Mark replied') + '</button></div></div>').join('') : '<div class="muted">No video sent yet.</div>') +
+    '</aside>';
+  $('scrim').onclick = closeDrawer; $('dx').onclick = closeDrawer;
+  $('dcopy').onclick = () => { (navigator.clipboard ? navigator.clipboard.writeText(c.email) : Promise.reject()).then(() => toast('Email copied'), () => toast('Select and copy the email above')); };
+  document.querySelectorAll('.drawer [data-st]').forEach((b) => b.addEventListener('click', () => setStatus(b.dataset.st, b.dataset.to)));
+  if (!keepFocus) $('dx').focus(); else document.querySelector('.drawer').scrollTop = keep;
+}
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && openKey) closeDrawer(); });
+
+/* keep it fresh: reload quietly every minute while the tab is visible */
+ticker = setInterval(() => { if (D && !document.hidden) load(true); }, 60000);
+load().then((ok) => { if (!ok && $('app') && $('app').hidden && $('login').hidden && D === null) showLogin(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fidara QR Codes</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+:root{--forest:#1F5C45;--deep:#123D2C;--sun:#FFC93C;--cream:#F4F1EA;--line:#D9D4C7;--muted:#4E6B5D}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--deep);font-family:'Nunito Sans',system-ui,sans-serif;font-size:16px}
+main{max-width:980px;margin:0 auto;padding:28px 16px 48px}
+h1{font-family:Poppins,sans-serif;font-weight:800;margin:0 0 6px;font-size:clamp(26px,4vw,36px)}
+.lead{color:var(--muted);margin:0 0 20px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:20px}
+label{display:block;font-family:Poppins,sans-serif;font-weight:600;font-size:14px;margin-bottom:6px}
+input[type=url]{width:100%;padding:12px 14px;border:2px solid #BFC8BE;border-radius:12px;font:inherit;min-height:48px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+button{font-family:Poppins,sans-serif;font-weight:700;border-radius:999px;padding:10px 18px;border:2px solid var(--deep);background:#fff;color:var(--deep);cursor:pointer;min-height:44px}
+button.go{background:var(--forest);border-color:var(--forest);color:#fff}
+.main{display:flex;flex-wrap:wrap;gap:24px;align-items:center}
+.main .code{width:260px;max-width:100%;background:#fff;border-radius:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.tile{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center;break-inside:avoid}
+.tile .code{width:100%;max-width:150px}
+.tile b{display:block;font-family:Poppins,sans-serif;font-size:14px;margin-top:6px}
+.tile small{color:var(--muted);word-break:break-all;font-size:11px}
+.url{word-break:break-all;color:var(--muted);font-size:14px}
+.warn{background:#FDE7E2;color:#8A1F0C;border-radius:12px;padding:10px 14px;font-weight:700;margin-top:12px}
+@media print{body{background:#fff}.noprint{display:none!important}.panel{border:0;padding:0}main{padding:0}}
+</style>
+</head>
+<body>
+<main>
+  <div class="noprint">
+    <h1>Fidara QR codes</h1>
+    <p class="lead">The main code opens the app with all 10 courses. Course codes open one course directly (useful on lesson cards in the box).</p>
+    <div class="panel">
+      <label for="u">App address (the https address of the Fidara app)</label>
+      <input id="u" type="url" spellcheck="false">
+      <div class="row">
+        <button class="go" id="bMake">Make codes</button>
+        <button id="bPng">Download main code (PNG)</button>
+        <button id="bSvg">Download main code (SVG)</button>
+        <button id="bPrint">Print sheet</button>
+      </div>
+      <div id="warn"></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="main">
+      <div id="mainCode" class="code"></div>
+      <div><h2 style="font-family:Poppins,sans-serif;margin:0 0 6px">Scan to start your puppy training</h2>
+        <div>10 courses · video review by Charlotte</div><div class="url" id="mainUrl"></div></div>
+    </div>
+  </div>
+  <div class="panel">
+    <h2 style="font-family:Poppins,sans-serif;margin:0 0 12px;font-size:20px">Course codes</h2>
+    <div class="grid" id="grid"></div>
+  </div>
+</main>
+<script src="qr.js"></script>
+<script>
+const NAMES = ['Name recognition', 'Sit', 'Down', 'Come', 'Stay', 'Leave it', 'Loose leash', 'Crate & settle', 'Gentle handling', 'First trick: Spin'];
+const $ = (id) => document.getElementById(id);
+const guess = () => { const p = location.href.split('#')[0].split('?')[0].replace(/qr\.html$/, ''); return /^https?:/.test(p) ? p : 'https://YOUR-FIDARA-APP.example/'; };
+$('u').value = new URLSearchParams(location.search).get('url') || guess();
+const base = () => { let u = $('u').value.trim(); if (!/^https?:\/\//.test(u)) u = 'https://' + u; return u.split('#')[0]; };
+const joinUrl = () => base().replace(/\/?$/, '/') + 'join';
+function make() {
+  const b = base();
+  $('warn').innerHTML = '';
+  if (!/^https:\/\//.test(b) || /YOUR-FIDARA-APP|localhost|claude\.ai|claudeusercontent/.test(b)) {
+    const w = document.createElement('div'); w.className = 'warn';
+    w.textContent = 'Enter the final public https address of the hosted app before printing. The camera only works on https, and printed codes cannot be changed.';
+    $('warn').appendChild(w);
+  }
+  const j = joinUrl(); // the box code opens the sign-up form
+  $('mainCode').innerHTML = FidaraQR.svg(j, { level: 'M' }); $('mainUrl').textContent = j;
+  $('grid').innerHTML = '';
+  NAMES.forEach((n, i) => {
+    const u = b + '#/lesson/' + (i + 1), t = document.createElement('div'); t.className = 'tile';
+    t.innerHTML = FidaraQR.svg(u, { level: 'M' }).replace('<svg ', '<svg class="code" ');
+    const h = document.createElement('b'); h.textContent = (i + 1) + '. ' + n; const s = document.createElement('small'); s.textContent = u;
+    t.append(h, s); $('grid').appendChild(t);
+  });
+}
+function download(name, href) { const a = document.createElement('a'); a.href = href; a.download = name; document.body.appendChild(a); a.click(); a.remove(); }
+$('bMake').onclick = make; $('u').addEventListener('keydown', (e) => { if (e.key === 'Enter') make(); });
+$('bSvg').onclick = () => download('fidara-qr.svg', 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(FidaraQR.svg(joinUrl(), { level: 'M' })));
+$('bPng').onclick = () => {
+  const q = FidaraQR.encode(joinUrl(), 'M'), scale = 24, n = q.size + 8, c = document.createElement('canvas'); c.width = c.height = n * scale;
+  const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.fillStyle = '#000';
+  for (let y = 0; y < q.size; y++) for (let x = 0; x < q.size; x++) if (q.get(x, y)) g.fillRect((x + 4) * scale, (y + 4) * scale, scale, scale);
+  download('fidara-qr.png', c.toDataURL('image/png'));
+};
+$('bPrint').onclick = () => window.print();
+make();
+</script>
+</body>
+</html>
