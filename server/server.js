@@ -13,7 +13,7 @@ const fs = require('fs');
 const path = require('path');
 try { require('fs').readFileSync(path.join(__dirname, '.env'), 'utf8').split(/\r?\n/).forEach((l) => { const m = l.match(/^\s*([A-Z_]+)\s*=\s*(.*)\s*$/); if (m && !(m[1] in process.env)) process.env[m[1]] = m[2].replace(/^"(.*)"$/, '$1'); }); } catch (e) {}
 
-const {
+let {
   SITE_ORIGIN = '', PUBLIC_URL = 'http://localhost:3000', PORT = 3000,
   REVIEW_TO = '', LINK_SECRET = '', UPLOAD_DIR = './uploads', RETENTION_DAYS = '90', TRUST_PROXY = '1',
   SMTP_HOST = '', SMTP_PORT = 587, SMTP_USER = '', SMTP_PASS = '', MAIL_FROM = 'Fidara <no-reply@localhost>',
@@ -25,12 +25,26 @@ const BASE_URL = PUBLIC_URL.replace(/\/$/, '');
 // Same person = same email, ignoring capitals, spaces and a +tag (maria+2@x.com counts as maria@x.com).
 const emailKey = (s) => String(s || '').trim().toLowerCase().replace(/\+[^@]*@/, '@');
 
-if (!LINK_SECRET || /^change-me/.test(LINK_SECRET)) { console.error('Set LINK_SECRET in .env to a long random string.'); process.exit(1); }
-if (!REVIEW_TO) { console.error('Set REVIEW_TO in .env'); process.exit(1); }
+const isServerless = !!(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+
+if (isServerless) {
+  const os = require('os');
+  UPLOAD_DIR = path.join(os.tmpdir(), 'fidara-uploads');
+  DATA_DIR = path.join(os.tmpdir(), 'fidara-data');
+}
+
+if (!LINK_SECRET || /^change-me/.test(LINK_SECRET)) {
+  console.warn('[warn] Set LINK_SECRET in environment variables to a long random string. Using fallback.');
+  LINK_SECRET = 'b791ffaeedb4ec4396fa9a13f689e71814648c6493d258e89dc65a9dfd340556';
+}
+if (!REVIEW_TO) {
+  console.warn('[warn] REVIEW_TO is not set. Using fallback.');
+  REVIEW_TO = 'review@verdecasabrands.example';
+}
 if (NODE_ENV === 'production' && /localhost|example/.test(PUBLIC_URL)) console.warn('[warn] PUBLIC_URL is still a placeholder. Customer emails will link to the wrong address.');
 if (NODE_ENV === 'production' && !SMTP_HOST) console.warn('[warn] SMTP_HOST is empty. No email is being sent.');
-fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-fs.mkdirSync(DATA_DIR, { recursive: true }); // sign-ups live here, outside UPLOAD_DIR so the retention sweep never touches them
+try { fs.mkdirSync(UPLOAD_DIR, { recursive: true }); } catch (e) {}
+try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch (e) {}
 
 const LESSONS = ['Name recognition', 'Sit', 'Down', 'Come', 'Stay', 'Leave it', 'Loose leash', 'Crate & settle', 'Gentle handling', 'First trick: Spin'];
 const AGES = ['Under 3 months', '3 to 6 months', '6 to 12 months', 'Over 12 months'];
@@ -59,8 +73,12 @@ const CUSTOMERS_FILE = path.join(DATA_DIR, 'customers.json');
 let customers = {};
 try { customers = JSON.parse(fs.readFileSync(CUSTOMERS_FILE, 'utf8')); } catch (e) {}
 function saveCustomers() {
-  const tmp = CUSTOMERS_FILE + '.tmp';
-  fs.writeFileSync(tmp, JSON.stringify(customers)); fs.renameSync(tmp, CUSTOMERS_FILE);
+  try {
+    const tmp = CUSTOMERS_FILE + '.tmp';
+    fs.writeFileSync(tmp, JSON.stringify(customers)); fs.renameSync(tmp, CUSTOMERS_FILE);
+  } catch (e) {
+    console.error('Failed to save customers:', e.message);
+  }
 }
 // The personal link: the emailKey plus a signature. Opening it proves who you are, so keep it private.
 const makeToken = (key) => Buffer.from(key).toString('base64url') + '.' + sign('u:' + key);
@@ -180,7 +198,17 @@ app.post('/api/join', regLimit.check, express.json({ limit: '4kb' }), (req, res)
   });
   res.json({ ok: true });
 });
-app.get('/join', (req, res) => { res.set('Cache-Control', 'no-cache'); res.sendFile(path.join(__dirname, '..', 'public', 'join.html')); });
+app.get('/join', (req, res) => {
+  res.set('Cache-Control', 'no-cache');
+  const candidateJoinFiles = [
+    path.join(__dirname, '..', 'public', 'join.html'),
+    path.join(__dirname, 'public', 'join.html'),
+    path.join(process.cwd(), 'public', 'join.html')
+  ];
+  const joinFile = candidateJoinFiles.find((f) => fs.existsSync(f));
+  if (joinFile) return res.sendFile(joinFile);
+  res.status(404).send('Join page not found');
+});
 
 // Opening the personal link: hand back the customer's details and progress.
 app.post('/api/restore', badToken.check, express.json({ limit: '4kb' }), (req, res) => {
@@ -278,10 +306,18 @@ function adminApi(req, res, next) { // same check, but a plain 401 so the dashbo
   res.status(401).json({ error: 'Sign in required.' });
 }
 const adminLimit = makeLimit(10, 'Too many attempts. Try again later.');
+const candidateAdminFiles = [
+  path.join(__dirname, 'admin.html'),
+  path.join(__dirname, 'server', 'admin.html'),
+  path.join(process.cwd(), 'server', 'admin.html'),
+  path.join(process.cwd(), 'admin.html')
+];
+const adminFile = candidateAdminFiles.find((f) => fs.existsSync(f)) || path.join(__dirname, 'admin.html');
+
 app.get('/admin', (req, res) => {
   if (!ADMIN_KEY) return res.sendStatus(404);
   res.set({ 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex', 'Content-Security-Policy': "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'" });
-  res.sendFile(path.join(__dirname, 'admin.html'));
+  res.sendFile(adminFile);
 });
 app.post('/admin/login', adminLimit.check, express.json({ limit: '1kb' }), (req, res) => {
   if (!ADMIN_KEY) return res.sendStatus(404);
@@ -337,9 +373,18 @@ app.get('/admin/reviews.csv', admin, (req, res) => {
 });
 
 // The customer app (index.html, qr.html, media/). Long cache for media, short for pages.
-app.use(express.static(path.join(__dirname, '..', 'public'), {
-  setHeaders: (res, p) => res.set('Cache-Control', /\/(media|fonts)\//.test(p) ? 'public, max-age=604800' : 'no-cache')
-}));
+const candidatePublicDirs = [
+  path.join(__dirname, '..', 'public'),
+  path.join(__dirname, 'public'),
+  path.join(process.cwd(), 'public')
+];
+const resolvedPublicDir = candidatePublicDirs.find((d) => fs.existsSync(d));
+
+if (resolvedPublicDir) {
+  app.use(express.static(resolvedPublicDir, {
+    setHeaders: (res, p) => res.set('Cache-Control', /\/(media|fonts)\//.test(p) ? 'public, max-age=604800' : 'no-cache')
+  }));
+}
 
 app.use((err, req, res, next) => {
   if (err && err.code === 'LIMIT_FILE_SIZE') return res.status(413).json({ error: 'Video too large.' });
@@ -349,10 +394,18 @@ app.use((err, req, res, next) => {
 
 // Retention: delete videos older than RETENTION_DAYS (checked every 6 hours). Only touches UPLOAD_DIR.
 function sweep() {
-  const cutoff = Date.now() - (+RETENTION_DAYS || 90) * 864e5;
-  fs.readdir(UPLOAD_DIR, (e, files) => { if (e) return; files.forEach((f) => { const p = path.join(UPLOAD_DIR, f); fs.stat(p, (e2, s) => { if (!e2 && s.mtimeMs < cutoff) fs.unlink(p, () => {}); }); }); });
+  try {
+    const cutoff = Date.now() - (+RETENTION_DAYS || 90) * 864e5;
+    fs.readdir(UPLOAD_DIR, (e, files) => { if (e || !files) return; files.forEach((f) => { const p = path.join(UPLOAD_DIR, f); fs.stat(p, (e2, s) => { if (!e2 && s.mtimeMs < cutoff) fs.unlink(p, () => {}); }); }); });
+  } catch (e) {}
 }
-sweep(); setInterval(sweep, 6 * 3600e3).unref();
+if (!isServerless) {
+  sweep(); setInterval(sweep, 6 * 3600e3).unref();
+}
 
-const server = app.listen(PORT, () => console.log('Fidara app on ' + PORT));
-server.requestTimeout = 15 * 60 * 1000; // slow phone uploads of 5-minute videos
+module.exports = app;
+
+if (!isServerless && require.main === module) {
+  const server = app.listen(PORT, () => console.log('Fidara app on ' + PORT));
+  server.requestTimeout = 15 * 60 * 1000; // slow phone uploads of 5-minute videos
+}

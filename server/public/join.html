@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0F3325">
+<meta name="robots" content="noindex">
+<title>Join Fidara</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fidara">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root{--deep:#0F3325;--forest:#1F5C45;--leaf:#2F7A5C;--sun:#FFC93C;--cream:#F6F2E9;--paper:#FFFDF8;--line:#E2DCCB;--muted:#55705F;--mint:#E7EFE9;--pale:#CFE3D8;--ink:#12261D;--r:22px;--shadow:0 1px 2px rgba(15,51,37,.06),0 12px 32px -12px rgba(15,51,37,.22)}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;color-scheme:light}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:'Nunito Sans',system-ui,sans-serif;font-size:17px;line-height:1.55;min-height:100vh}
+button,input{font:inherit;color:inherit}
+button{font-family:'Poppins',sans-serif;cursor:pointer}
+button:disabled{opacity:.5;cursor:default}
+:focus-visible{outline:3px solid var(--sun);outline-offset:3px;border-radius:6px}
+[hidden]{display:none!important}
+a{color:var(--forest)}
+h1,h2{font-family:'Poppins',sans-serif;letter-spacing:-.02em;line-height:1.1;margin:0}
+em.serif{font-family:'Fraunces',Georgia,serif;font-style:italic;font-weight:700;color:var(--sun)}
+.hero{background:linear-gradient(160deg,#164A37,#0F3325);color:#fff;padding:max(18px,env(safe-area-inset-top,0px)) 18px 74px}
+.w{max-width:560px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Poppins',sans-serif;font-weight:800;font-size:23px;color:#fff;margin-bottom:26px}
+.hero h1{font-weight:800;font-size:clamp(32px,8vw,46px)}
+.hero p{color:var(--pale);margin:12px 0 0;font-size:18px}
+main{margin-top:-52px;padding:0 18px 48px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:clamp(18px,4vw,30px);box-shadow:var(--shadow)}
+label.f{display:block;font-family:'Poppins',sans-serif;font-weight:600;font-size:14px;margin:0 0 6px}
+.opt{font-weight:400;color:var(--muted)}
+.in{width:100%;padding:12px 14px;border:2px solid #CBD3C7;border-radius:14px;background:#fff;min-height:52px;margin-bottom:16px;font-size:17px;transition:border-color .15s,box-shadow .15s}
+.in:focus{outline:none;border-color:var(--forest);box-shadow:0 0 0 4px rgba(47,122,92,.18)}
+.agree{display:flex;gap:12px;align-items:flex-start;margin:0 0 14px;line-height:1.45;font-size:15.5px;cursor:pointer}
+.agree input{flex:none;width:24px;height:24px;margin:1px 0 0;accent-color:var(--forest);cursor:pointer}
+.box{background:var(--mint);border-radius:16px;padding:16px;margin:4px 0 18px}
+.box h2{font-size:16px;margin-bottom:4px}
+.box p{margin:0 0 12px;font-size:14.5px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:#fff;border:2px solid #CBD3C7;border-radius:999px;padding:10px 16px;font-weight:600;font-size:14px;min-height:44px}
+.chip[aria-pressed=true]{background:var(--forest);border-color:var(--forest);color:#fff}
+.pill{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border-radius:999px;padding:12px 24px;font-family:'Poppins',sans-serif;font-weight:700;font-size:18px;min-height:56px;text-decoration:none;border:2px solid var(--sun);background:var(--sun);color:var(--deep);box-shadow:0 8px 20px -8px rgba(242,178,0,.7)}
+.pill.line{background:transparent;border-color:var(--deep);box-shadow:none;font-size:16px;margin-top:12px}
+.hint{font-size:14px;color:var(--muted);margin:10px 0 0;text-align:center}
+#err{color:#8A1F0C;background:#FDE7E2;border-radius:14px;padding:12px 16px;font-weight:700;margin-top:6px}
+.done{text-align:center}
+.done .tick{width:64px;height:64px;border-radius:50%;background:var(--forest);color:#fff;font-size:32px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.done h2{font-size:28px;margin-bottom:8px}
+.done p{margin:0 0 18px;color:var(--muted)}
+.steps{text-align:left;background:var(--mint);border-radius:16px;padding:14px 18px 14px 36px;margin:0 0 16px;font-size:15.5px}
+.steps li{margin:6px 0}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--deep);color:#fff;font-family:'Poppins',sans-serif;font-weight:600;border-radius:999px;padding:12px 22px;box-shadow:var(--shadow);max-width:calc(100vw - 32px)}
+</style>
+</head>
+<body>
+<header class="hero"><div class="w">
+  <div class="brand"><svg width="30" height="30" viewBox="0 0 64 64" fill="#FFC93C" aria-hidden="true"><ellipse cx="14" cy="26" rx="7" ry="9"/><ellipse cx="27" cy="14" rx="7" ry="10"/><ellipse cx="42" cy="14" rx="7" ry="10"/><ellipse cx="53" cy="27" rx="7" ry="9"/><path d="M32 30c-9 0-17 9-17 17 0 6 5 9 10 8 4-1 5-2 7-2s3 1 7 2c5 1 10-2 10-8 0-8-8-17-17-17z"/></svg>Fidara</div>
+  <h1>Welcome to <em class="serif">Fidara</em></h1>
+  <p>Join in a minute, then add the app to your phone to open Charlotte’s 10 puppy-training courses.</p>
+</div></header>
+
+<main><div class="w">
+  <form class="card" id="form" novalidate>
+    <label class="f" for="name">Your name</label><input class="in" id="name" autocomplete="name">
+    <label class="f" for="email">Email</label><input class="in" id="email" type="email" autocomplete="email" inputmode="email">
+    <label class="f" for="phone">WhatsApp number <span class="opt">(optional, with country code)</span></label><input class="in" id="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+1 305 555 0123">
+    <label class="f" for="dog">Your puppy’s name <span class="opt">(optional)</span></label><input class="in" id="dog">
+
+    <div class="box">
+      <h2>Stay in touch</h2>
+      <p>Choose where we may contact you.</p>
+      <div class="chips" id="channels" role="group" aria-label="Where we may contact you"></div>
+    </div>
+
+    <!-- Wording is a draft: confirm with the person who owns the legal text. -->
+    <label class="agree"><input type="checkbox" id="consent"><span>I agree that Verde Casa Brands may collect and use my details to set up my Fidara account and contact me about it, in the ways I chose above. I have read the <a href="terms.html#privacy-en" target="_blank" rel="noopener">Privacy Notice</a>.</span></label>
+    <div id="err" role="alert" hidden></div>
+    <button class="pill" id="go" type="submit" style="margin-top:14px">Join Fidara</button>
+    <p class="hint">Free with your Fidara box. You can ask us to delete your details at any time.</p>
+  </form>
+
+  <section class="card done" id="done" hidden>
+    <div class="tick">✓</div>
+    <h2>You’re in!</h2>
+    <p id="doneTxt">Now put Fidara on your phone. Next time, tap the icon and the courses open straight away.</p>
+    <button class="pill" id="install" hidden>Download the app</button>
+    <ol class="steps" id="iosSteps" hidden>
+      <li>Tap the <b>Share</b> button in Safari (the square with an arrow).</li>
+      <li>Choose <b>Add to Home Screen</b>.</li>
+      <li>Tap <b>Add</b>. Then open <b>Fidara</b> from your home screen.</li>
+    </ol>
+    <p id="otherTxt" hidden>Open this page in <b>Chrome</b> (Android) or <b>Safari</b> (iPhone) to add the app to your home screen.</p>
+    <a class="pill line" id="cont" href="/">Open my courses now</a>
+  </section>
+</div></main>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const TERMS_VERSION = 'draft-2';
+const store = { get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+const isStandalone = () => (matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+// Opened from the home-screen icon: go straight to the main site with the courses.
+if (isStandalone()) location.replace('/');
+
+const CH = [['email', 'Email'], ['whatsapp', 'WhatsApp'], ['social', 'Social media']];
+const picked = new Set();
+CH.forEach(([k, label]) => {
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = label; b.setAttribute('aria-pressed', 'false');
+  b.onclick = () => { picked.has(k) ? picked.delete(k) : picked.add(k); b.setAttribute('aria-pressed', String(picked.has(k))); };
+  $('channels').appendChild(b);
+});
+
+function toast(msg) { const t = $('toast'); t.textContent = msg; t.hidden = false; setTimeout(() => { t.hidden = true; }, 3200); }
+function fail(msg) { $('err').textContent = msg; $('err').hidden = false; }
+
+let installEvt = null;
+window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installEvt = e; paintInstall(); });
+window.addEventListener('appinstalled', () => { installEvt = null; store.set('fidara_install_done', 1); toast('Fidara is on your phone. Open it from your home screen.'); });
+function paintInstall() {
+  if ($('done').hidden) return;
+  $('install').hidden = !installEvt;
+  $('iosSteps').hidden = !(isIOS && !installEvt);
+  $('otherTxt').hidden = !!installEvt || isIOS;
+}
+$('install').onclick = async () => { if (!installEvt) return; installEvt.prompt(); try { await installEvt.userChoice; } catch (e) {} installEvt = null; paintInstall(); };
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+
+function showDone() { $('form').hidden = true; $('done').hidden = false; window.scrollTo(0, 0); paintInstall(); }
+if (store.get('fidara_join')) showDone();
+
+$('form').addEventListener('submit', async (e) => {
+  e.preventDefault(); $('err').hidden = true;
+  const f = { name: $('name').value.trim(), email: $('email').value.trim(), phone: $('phone').value.trim(), dog: $('dog').value.trim() };
+  if (!f.name) return fail('Please enter your name.');
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email)) return fail('Please enter a valid email address.');
+  if (f.phone && !/^\+?[\d\s().-]{7,25}$/.test(f.phone)) return fail('Please check the phone number.');
+  if (picked.has('whatsapp') && !f.phone) return fail('Add your WhatsApp number, or untick WhatsApp.');
+  if (!$('consent').checked) return fail('Please tick the box to agree. We cannot sign you up without it.');
+  $('go').disabled = true; $('go').textContent = 'Joining…';
+  try {
+    const r = await fetch('/api/join', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.assign(f, { channels: [...picked], consent: true, termsVersion: TERMS_VERSION })) });
+    if (r.status === 429) throw new Error('Too many tries. Please wait a little and try again.');
+    if (!r.ok) throw new Error('Please check the form and try again.');
+    store.set('fidara_join', { name: f.name, email: f.email, dog: f.dog });
+    showDone();
+  } catch (err) { fail(err.message === 'Failed to fetch' ? 'Could not reach Fidara. Check your connection and try again.' : err.message); }
+  $('go').disabled = false; $('go').textContent = 'Join Fidara';
+});
+</script>
+</body>
+</html>

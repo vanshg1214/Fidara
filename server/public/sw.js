@@ -1,0 +1,17 @@
+/* Fidara service worker: lets the app install to the home screen and open the pages offline.
+   Network first (so updates always show), cache as the fallback. Never touches the API, videos, audio or review links. */
+const CACHE = 'fidara-v1';
+self.addEventListener('install', (e) => {
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(['/', '/lessons.js', '/manifest.webmanifest', '/icons/icon-192.png'])).then(() => self.skipWaiting()));
+});
+self.addEventListener('activate', (e) => {
+  e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
+});
+self.addEventListener('fetch', (e) => {
+  const r = e.request, u = new URL(r.url);
+  if (r.method !== 'GET' || u.origin !== location.origin || r.headers.has('range') || /^\/(api|v|admin|media|health)(\/|$)/.test(u.pathname)) return;
+  e.respondWith(fetch(r).then((res) => {
+    if (res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(r, copy)); }
+    return res;
+  }).catch(() => caches.match(r).then((hit) => hit || (r.mode === 'navigate' ? caches.match('/') : Response.error()))));
+});

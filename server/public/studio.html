@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Fidara Studio</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+/* Layout: camera stage on the left, lesson script and takes on the right; review notes open under the stage. Stacks to one column on phones. */
+:root{
+  --ink:#0C2A1F;        /* page */
+  --panel:#133B2B;      /* cards */
+  --panel-2:#1A4A37;    /* inputs, raised */
+  --line:#2B5C47;
+  --text:#F2F5EE;
+  --muted:#A8C5B5;
+  --gold:#FFC93C;
+  --rec:#FF6B5B;
+  --ok:#7BD9A0;
+  --font-display:'Poppins',system-ui,sans-serif;
+  --font-body:'Nunito Sans',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{margin:0;background:var(--ink);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.45;padding-inline:16px;padding-block:0 40px}
+button,select,input,textarea{font:inherit;color:inherit}
+button{font-family:var(--font-display);cursor:pointer}
+button:disabled{opacity:.4;cursor:default}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+[hidden]{display:none!important}
+.wrap{max-width:1180px;margin:0 auto}
+header{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;justify-content:space-between;padding-block:18px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:800;font-size:22px}
+.brand svg{flex:none}
+.brand small{font-weight:600;font-size:13px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-left:4px}
+.hint{font-size:13px;color:var(--muted)}
+kbd{font-family:var(--font-display);font-size:12px;font-weight:600;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px}
+.col{display:flex;flex-direction:column;gap:20px;min-width:0}
+h2{font-family:var(--font-display);font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:0 0 10px}
+h3{font-family:var(--font-display);font-weight:800;font-size:22px;margin:0 0 4px;line-height:1.2}
+
+/* stage */
+.stage-head{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.status{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:600;font-size:13px;color:var(--muted)}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.status[data-m="live"] .dot{background:var(--ok)}
+.status[data-m="recording"] .dot,.status[data-m="countdown"] .dot{background:var(--rec)}
+.status[data-m="paused"] .dot{background:var(--gold)}
+.stage{position:relative;background:#000;border-radius:14px;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:260px}
+.stage video{display:block;width:100%;max-height:70vh;object-fit:contain;background:#000}
+.stage video.mirror{transform:scaleX(-1)}
+.empty{position:absolute;inset:0;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;text-align:center;padding:24px;color:var(--muted)}
+.empty b{font-family:var(--font-display);color:var(--text);font-size:18px}
+.empty p{margin:0;max-width:34ch}
+.count{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;font-size:clamp(96px,22vw,180px);color:var(--gold);background:rgba(0,0,0,.45)}
+.recbadge{position:absolute;top:12px;left:12px;display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.65);border-radius:999px;padding:6px 12px;font-family:var(--font-display);font-weight:700;font-size:14px;font-variant-numeric:tabular-nums}
+.recbadge i{width:10px;height:10px;border-radius:50%;background:var(--rec);animation:pulse 1s infinite}
+.recbadge.paused i{animation:none;background:var(--gold)}
+@keyframes pulse{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.recbadge i{animation:none}}
+.flash{position:absolute;top:12px;right:12px;background:var(--gold);color:var(--ink);font-family:var(--font-display);font-weight:700;font-size:13px;border-radius:999px;padding:6px 12px}
+.meter{height:6px;background:var(--panel-2);border-radius:999px;overflow:hidden;margin-top:10px}
+.meter i{display:block;height:100%;width:0;background:var(--ok);transition:width .08s linear}
+.meter-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:4px}
+
+/* timeline of notes */
+.timeline{position:relative;height:22px;margin-top:10px;background:var(--panel-2);border-radius:999px}
+.timeline button{position:absolute;top:3px;width:16px;height:16px;margin-left:-8px;border-radius:50%;border:2px solid var(--ink);padding:0;background:var(--gold)}
+.timeline button[data-tag="Great"]{background:var(--ok)}
+.timeline button[data-tag="Flag"]{background:var(--rec)}
+
+/* buttons */
+.controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.btn{border:2px solid var(--line);background:var(--panel-2);color:var(--text);border-radius:999px;padding:11px 20px;font-weight:700;font-size:15px;min-height:46px}
+.btn:hover:not(:disabled){border-color:var(--gold)}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+.btn.rec{background:var(--rec);border-color:var(--rec);color:#2A0A06}
+.btn.small{padding:6px 14px;font-size:13px;min-height:34px}
+.btn.ghost{background:transparent}
+.devices{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px}
+label.f{display:flex;flex-direction:column;gap:4px;font-family:var(--font-display);font-weight:600;font-size:12px;color:var(--muted)}
+select,input[type=text],textarea{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:15px;width:100%;min-height:42px}
+textarea{resize:vertical;min-height:70px}
+.check{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+.check input{width:18px;height:18px;accent-color:var(--gold)}
+.fallback{margin-top:14px;padding:12px 14px;border:1px dashed var(--line);border-radius:12px;font-size:14px;color:var(--muted)}
+.fallback .controls{margin-top:8px}
+
+/* script */
+.goal{margin:0 0 12px;color:var(--muted);font-style:italic}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.steps li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px}
+.steps .n{width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--ink);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;font-size:13px}
+.steps b{font-family:var(--font-display);display:block}
+.steps span{color:var(--muted);font-size:15px}
+.mini{margin-top:14px;display:grid;gap:12px}
+.mini div{background:var(--panel-2);border-radius:12px;padding:12px 14px;font-size:15px}
+.mini b{font-family:var(--font-display);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:4px}
+.mini ul{margin:0;padding-left:18px}
+.target{display:inline-block;margin-top:10px;font-family:var(--font-display);font-weight:600;font-size:13px;color:var(--muted)}
+
+/* takes */
+.takes{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+.take{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;background:var(--panel-2);border:2px solid transparent;border-radius:12px;padding:10px 12px;cursor:pointer}
+.take[aria-current="true"]{border-color:var(--gold)}
+.take b{font-family:var(--font-display);font-size:15px;display:block}
+.take small{color:var(--muted);font-size:13px}
+.pill{display:inline-block;font-family:var(--font-display);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:3px 9px;border:1px solid var(--line);color:var(--muted)}
+.pill.Approved{background:var(--ok);border-color:var(--ok);color:var(--ink)}
+.pill.Edits{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+.pill.Retake{background:var(--rec);border-color:var(--rec);color:#2A0A06}
+.empty-takes{color:var(--muted);font-size:15px;margin:0}
+
+/* review */
+.verdicts{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.verdicts .btn[aria-pressed="true"].v-Approved{background:var(--ok);border-color:var(--ok);color:var(--ink)}
+.verdicts .btn[aria-pressed="true"].v-Edits{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+.verdicts .btn[aria-pressed="true"].v-Retake{background:var(--rec);border-color:var(--rec);color:#2A0A06}
+.addnote{display:grid;grid-template-columns:130px minmax(0,1fr) auto;gap:8px;align-items:end}
+@media (max-width:600px){.addnote{grid-template-columns:minmax(0,1fr)}}
+.notes{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.note{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;gap:10px;align-items:start;background:var(--panel-2);border-radius:12px;padding:10px 12px}
+@media (max-width:600px){.note{grid-template-columns:auto minmax(0,1fr) auto}.note .tag{grid-column:2}.note .txt{grid-column:1/-1}}
+.note .time{font-variant-numeric:tabular-nums;background:var(--ink);color:var(--gold);border:1px solid var(--line);border-radius:8px;padding:2px 9px;font-weight:700;font-size:13px}
+.note .tag{font-family:var(--font-display);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:5px}
+.note .txt{overflow-wrap:anywhere;padding-top:1px}
+.note .txt.blank{color:var(--muted);font-style:italic}
+.note .x{background:transparent;border:0;color:var(--muted);font-size:20px;line-height:1;padding:2px 6px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--gold);color:var(--ink);font-family:var(--font-display);font-weight:700;border-radius:999px;padding:10px 18px;z-index:10;max-width:calc(100vw - 32px)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="brand">
+    <svg width="28" height="28" viewBox="0 0 64 64" fill="#FFC93C" aria-hidden="true"><ellipse cx="14" cy="26" rx="7" ry="9"/><ellipse cx="27" cy="14" rx="7" ry="10"/><ellipse cx="42" cy="14" rx="7" ry="10"/><ellipse cx="53" cy="27" rx="7" ry="9"/><path d="M32 30c-9 0-17 9-17 17 0 6 5 9 10 8 4-1 5-2 7-2s3 1 7 2c5 1 10-2 10-8 0-8-8-17-17-17z"/></svg>
+    Fidara <small>Studio</small>
+  </div>
+  <div class="hint"><kbd>R</kbd> record / stop &nbsp; <kbd>P</kbd> pause &nbsp; <kbd>F</kbd> flag a moment</div>
+</header>
+
+<main class="grid">
+  <div class="col">
+    <section class="card" aria-label="Camera">
+      <div class="stage-head">
+        <h3 id="stageTitle">Lesson 1</h3>
+        <span class="status" id="status" data-m="idle"><span class="dot"></span><span id="statusText">Camera off</span></span>
+      </div>
+      <div class="stage">
+        <video id="stage" playsinline muted></video>
+        <div class="empty" id="empty">
+          <b>Ready when you are</b>
+          <p>Turn on the camera, check the framing and sound, then press Record. Your dog and the treats should be in view.</p>
+        </div>
+        <div class="count" id="count" hidden></div>
+        <div class="recbadge" id="recBadge" hidden><i></i><span id="timer">0:00</span></div>
+        <div class="flash" id="flash" hidden>Flagged</div>
+      </div>
+      <div class="timeline" id="timeline" hidden aria-label="Notes along the video"></div>
+      <div id="meterBox" hidden>
+        <div class="meter"><i id="meter"></i></div>
+        <div class="meter-label"><span>Microphone level</span><span id="meterHint">Speak at your normal lesson volume</span></div>
+      </div>
+      <div class="controls">
+        <button class="btn gold" id="btnCam">Turn on camera</button>
+        <button class="btn rec" id="btnRec" disabled>Record</button>
+        <button class="btn" id="btnPause" disabled>Pause</button>
+        <button class="btn" id="btnFlag" disabled>Flag moment</button>
+        <button class="btn ghost" id="btnFlip" disabled>Flip camera</button>
+      </div>
+      <div class="devices" id="devices" hidden>
+        <label class="f">Camera<select id="selCam"></select></label>
+        <label class="f">Microphone<select id="selMic"></select></label>
+        <label class="f">Shape<select id="selShape"><option value="portrait">Vertical (phone style)</option><option value="landscape">Wide</option></select></label>
+      </div>
+      <div class="controls" style="margin-top:10px">
+        <label class="check"><input type="checkbox" id="chkMirror" checked> Mirror my preview (the recording is not mirrored)</label>
+        <label class="check"><input type="checkbox" id="chkCount" checked> 3 second countdown</label>
+      </div>
+      <div class="fallback" id="fallback">
+        <b id="fbTitle" style="font-family:var(--font-display);color:var(--text)">No live camera? Use the phone camera app instead.</b>
+        <div id="fbMsg">Record with your phone's own camera, or bring in a video you already have. It lands in your takes list ready for notes.</div>
+        <div class="controls">
+          <button class="btn small" id="btnPhone">Record with phone camera</button>
+          <button class="btn small" id="btnImport">Import a video</button>
+        </div>
+        <input type="file" id="filePhone" accept="video/*" capture hidden>
+        <input type="file" id="fileImport" accept="video/*" hidden>
+      </div>
+    </section>
+
+    <section class="card" id="review" aria-label="Review" hidden>
+      <h2 id="reviewTitle">Review</h2>
+      <div class="verdicts" role="group" aria-label="Verdict">
+        <button class="btn small v-Approved" data-v="Approved" aria-pressed="false">Approved</button>
+        <button class="btn small v-Edits" data-v="Edits" aria-pressed="false">Needs edits</button>
+        <button class="btn small v-Retake" data-v="Retake" aria-pressed="false">Retake</button>
+      </div>
+      <div class="addnote">
+        <label class="f">Type of note
+          <select id="noteTag"><option>Timing</option><option>Voice</option><option>Dog</option><option>Framing</option><option>Audio</option><option>Pace</option><option>Great</option></select>
+        </label>
+        <label class="f">Note <input type="text" id="noteText" placeholder="Say “Yes!” sooner, right when the rear lands" autocomplete="off"></label>
+        <button class="btn gold" id="btnNote">Add at 0:00</button>
+      </div>
+      <ul class="notes" id="notes"></ul>
+      <label class="f" style="margin-top:14px">Overall comments
+        <textarea id="overall" placeholder="What to keep, what to change on the next take"></textarea>
+      </label>
+      <div class="toolbar">
+        <button class="btn small" id="btnSaveVideo">Save video</button>
+        <button class="btn small" id="btnSaveNotes">Save review notes (.txt)</button>
+        <button class="btn small ghost" id="btnDelete">Delete this take</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="col">
+    <section class="card" aria-label="Lesson script">
+      <h2>Lesson to record</h2>
+      <label class="f"><span style="position:absolute;left:-9999px">Lesson</span><select id="selLesson"></select></label>
+      <div style="margin-top:14px">
+        <p class="goal" id="goal"></p>
+        <ol class="steps" id="steps"></ol>
+        <div class="mini">
+          <div><b>Common mistakes</b><ul id="mistakes"></ul></div>
+          <div><b>Ready to move on when</b><span id="ready"></span></div>
+        </div>
+        <span class="target" id="target"></span>
+      </div>
+    </section>
+
+    <section class="card" aria-label="Takes">
+      <div class="stage-head" style="margin-bottom:10px">
+        <h2 style="margin:0">Takes</h2>
+        <label class="check"><input type="checkbox" id="chkAll"> Show all lessons</label>
+      </div>
+      <ul class="takes" id="takes"></ul>
+      <p class="empty-takes" id="noTakes">No takes yet. Your first recording will appear here.</p>
+      <p class="hint" id="storeHint" style="margin:12px 0 0">Takes are stored in this browser on this device. Use Save video and Save review notes to share them.</p>
+    </section>
+  </div>
+</main>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="lessons.js"></script>
+<script>
+const LESSONS = window.FIDARA_LESSONS;
+
+const $ = (id) => document.getElementById(id);
+const fmt = (s) => { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const TAGS = ['Timing', 'Voice', 'Dog', 'Framing', 'Audio', 'Pace', 'Great'];
+const VERDICT_LABEL = { Approved: 'Approved', Edits: 'Needs edits', Retake: 'Retake' };
+
+/* ---------- storage: IndexedDB, with an in-memory fallback ---------- */
+let dbp = null, memOnly = false; const mem = new Map();
+function openDb() {
+  if (!dbp) dbp = new Promise((res, rej) => {
+    try {
+      const r = indexedDB.open('fidara-studio', 1);
+      r.onupgradeneeded = () => r.result.createObjectStore('takes', { keyPath: 'id' });
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    } catch (e) { rej(e); }
+  });
+  return dbp;
+}
+async function run(mode, fn) {
+  const d = await openDb();
+  return new Promise((res, rej) => {
+    const t = d.transaction('takes', mode); const req = fn(t.objectStore('takes'));
+    t.oncomplete = () => res(req && req.result); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error);
+  });
+}
+async function dbAll() { if (!memOnly) { try { return await run('readonly', (s) => s.getAll()); } catch (e) { memOnly = true; } } return [...mem.values()]; }
+async function dbPut(t) { if (!memOnly) { try { await run('readwrite', (s) => s.put(t)); return; } catch (e) { memOnly = true; } } mem.set(t.id, t); }
+async function dbDel(id) { if (!memOnly) { try { await run('readwrite', (s) => s.delete(id)); return; } catch (e) { memOnly = true; } } mem.delete(id); }
+
+/* ---------- state ---------- */
+let takes = [], curLesson = 0, curId = null, mode = 'idle';
+let stream = null, recorder = null, chunks = [], recMime = '';
+let startedAt = 0, pausedTotal = 0, pausedAt = 0, tick = null, flags = [], wake = null;
+let audioCtx = null, raf = 0, facing = 'user', objUrl = null;
+
+const stage = $('stage');
+function toast(msg) { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast.h); toast.h = setTimeout(() => { t.hidden = true; }, 2600); }
+function setMode(m) {
+  mode = m;
+  const names = { idle: 'Camera off', live: 'Camera on', countdown: 'Get ready', recording: 'Recording', paused: 'Paused', review: 'Reviewing a take' };
+  $('status').dataset.m = m; $('statusText').textContent = names[m];
+  const hasCam = m === 'live' || m === 'recording' || m === 'paused' || m === 'countdown';
+  $('btnCam').textContent = hasCam && m === 'live' ? 'Turn off camera' : 'Turn on camera';
+  $('btnCam').disabled = m === 'recording' || m === 'paused' || m === 'countdown';
+  $('btnRec').disabled = !(m === 'live' || m === 'recording' || m === 'paused');
+  $('btnRec').textContent = (m === 'recording' || m === 'paused') ? 'Stop' : 'Record';
+  $('btnPause').disabled = !(m === 'recording' || m === 'paused');
+  $('btnPause').textContent = m === 'paused' ? 'Resume' : 'Pause';
+  $('btnFlag').disabled = !(m === 'recording' || m === 'paused');
+  $('btnFlip').disabled = m !== 'live';
+  $('empty').hidden = hasCam || m === 'review';
+  $('meterBox').hidden = !hasCam;
+  $('devices').hidden = !(m === 'live');
+  $('recBadge').hidden = !(m === 'recording' || m === 'paused');
+  $('recBadge').classList.toggle('paused', m === 'paused');
+  $('count').hidden = m !== 'countdown';
+}
+
+/* ---------- lesson script ---------- */
+function renderLesson() {
+  const L = LESSONS[curLesson];
+  $('stageTitle').textContent = 'Lesson ' + (curLesson + 1) + ' · ' + L.n;
+  $('goal').textContent = L.g;
+  $('steps').innerHTML = L.s.map((x, i) => '<li><span class="n">' + (i + 1) + '</span><div><b>' + esc(x[0]) + '</b><span>' + esc(x[1]) + '</span></div></li>').join('');
+  $('mistakes').innerHTML = L.m.map((x) => '<li>' + esc(x) + '</li>').join('');
+  $('ready').textContent = L.r;
+  $('target').textContent = 'Audio lesson length to match: ' + L.dur;
+  renderTakes();
+}
+$('selLesson').innerHTML = LESSONS.map((l, i) => '<option value="' + i + '">' + (i + 1) + '. ' + esc(l.n) + '</option>').join('');
+$('selLesson').addEventListener('change', (e) => {
+  curLesson = +e.target.value; try { localStorage.setItem('fidara_studio_lesson', curLesson); } catch (e2) {}
+  renderLesson();
+});
+
+/* ---------- camera ---------- */
+function videoConstraints() {
+  const portrait = $('selShape').value === 'portrait';
+  const size = portrait ? { width: { ideal: 720 }, height: { ideal: 1280 } } : { width: { ideal: 1280 }, height: { ideal: 720 } };
+  const id = $('selCam').value;
+  return id ? Object.assign({ deviceId: { exact: id } }, size) : Object.assign({ facingMode: facing }, size);
+}
+async function startCamera() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { showNoCamera('This browser or page cannot open a live camera.'); return; }
+  stopCamera();
+  const micId = $('selMic').value;
+  const audio = micId ? { deviceId: { exact: micId }, echoCancellation: true, noiseSuppression: true } : { echoCancellation: true, noiseSuppression: true };
+  try {
+    try { stream = await navigator.mediaDevices.getUserMedia({ video: videoConstraints(), audio }); }
+    catch (e) { if (e && (e.name === 'OverconstrainedError' || e.name === 'NotFoundError')) stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true }); else throw e; }
+  } catch (e) {
+    const denied = e && (e.name === 'NotAllowedError' || e.name === 'SecurityError');
+    showNoCamera(denied ? 'Camera or microphone access was blocked. Allow it in the browser’s address bar, or use the options below.' : 'No camera or microphone was found.');
+    return;
+  }
+  clearReviewUrl(); stage.srcObject = stream; stage.muted = true; stage.controls = false;
+  stage.classList.toggle('mirror', $('chkMirror').checked && facing === 'user');
+  try { await stage.play(); } catch (e) {}
+  startMeter(); await listDevices(); curId = null; $('review').hidden = true; $('timeline').hidden = true; renderTakes();
+  setMode('live');
+}
+function stopCamera() {
+  if (stream) { stream.getTracks().forEach((t) => t.stop()); stream = null; }
+  stopMeter(); if (mode !== 'review') stage.srcObject = null;
+}
+function showNoCamera(msg) {
+  $('fbTitle').textContent = 'The live camera is not available here.';
+  $('fbMsg').textContent = msg + ' You can still record with your phone’s camera app or import a video.';
+  $('fallback').scrollIntoView({ block: 'nearest' }); toast('Live camera unavailable'); setMode('idle');
+}
+async function listDevices() {
+  try {
+    const ds = await navigator.mediaDevices.enumerateDevices();
+    const fill = (sel, kind, label) => {
+      const keep = sel.value; const list = ds.filter((d) => d.kind === kind);
+      sel.innerHTML = list.map((d, i) => '<option value="' + esc(d.deviceId) + '">' + esc(d.label || (label + ' ' + (i + 1))) + '</option>').join('');
+      const cur = stream && stream.getTracks().find((t) => t.kind === (kind === 'videoinput' ? 'video' : 'audio'));
+      const id = cur && cur.getSettings().deviceId;
+      sel.value = [...sel.options].some((o) => o.value === keep) ? keep : (id && [...sel.options].some((o) => o.value === id) ? id : (sel.options[0] ? sel.options[0].value : ''));
+    };
+    fill($('selCam'), 'videoinput', 'Camera'); fill($('selMic'), 'audioinput', 'Microphone');
+  } catch (e) {}
+}
+function startMeter() {
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC || !stream.getAudioTracks().length) return;
+    audioCtx = new AC(); const src = audioCtx.createMediaStreamSource(stream); const an = audioCtx.createAnalyser(); an.fftSize = 512; src.connect(an);
+    const buf = new Uint8Array(an.fftSize);
+    const loop = () => {
+      an.getByteTimeDomainData(buf); let peak = 0; for (let i = 0; i < buf.length; i++) peak = Math.max(peak, Math.abs(buf[i] - 128));
+      const lvl = Math.min(1, peak / 90); $('meter').style.width = (lvl * 100) + '%';
+      $('meter').style.background = lvl > 0.95 ? 'var(--rec)' : 'var(--ok)';
+      $('meterHint').textContent = lvl > 0.95 ? 'Too loud, step back from the mic' : (lvl < 0.04 ? 'Very quiet, check the mic or speak up' : 'Good level');
+      raf = requestAnimationFrame(loop);
+    }; loop();
+  } catch (e) {}
+}
+function stopMeter() { cancelAnimationFrame(raf); if (audioCtx) { try { audioCtx.close(); } catch (e) {} audioCtx = null; } $('meter').style.width = '0'; }
+
+$('btnCam').addEventListener('click', () => { if (mode === 'live') { stopCamera(); setMode('idle'); } else startCamera(); });
+$('btnFlip').addEventListener('click', () => { facing = facing === 'user' ? 'environment' : 'user'; $('selCam').innerHTML = ''; startCamera(); });
+['selCam', 'selMic', 'selShape'].forEach((id) => $(id).addEventListener('change', () => { if (mode === 'live') startCamera(); }));
+$('chkMirror').addEventListener('change', () => stage.classList.toggle('mirror', $('chkMirror').checked && facing === 'user' && mode !== 'review'));
+
+/* ---------- recording ---------- */
+function pickMime() {
+  if (!window.MediaRecorder) return null;
+  const c = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4'];
+  return c.find((t) => MediaRecorder.isTypeSupported(t)) || '';
+}
+const elapsed = () => ((mode === 'paused' ? pausedAt : performance.now()) - startedAt - pausedTotal) / 1000;
+function beginRecording() {
+  const mime = pickMime(); if (mime === null) { showNoCamera('This browser cannot record video.'); return; }
+  chunks = []; flags = []; pausedTotal = 0;
+  recorder = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 4000000 } : { videoBitsPerSecond: 4000000 });
+  recMime = recorder.mimeType || mime || 'video/webm';
+  recorder.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
+  recorder.onstop = finishRecording;
+  recorder.start(1000); startedAt = performance.now(); setMode('recording');
+  tick = setInterval(() => { $('timer').textContent = fmt(elapsed()); }, 200);
+  try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then((w) => { wake = w; }).catch(() => {}); } catch (e) {}
+}
+async function startRecordFlow() {
+  if ($('chkCount').checked) {
+    setMode('countdown'); let n = 3;
+    await new Promise((res) => { const show = () => { $('count').textContent = n; if (n-- <= 0) { clearInterval(h); res(); } }; show(); const h = setInterval(show, 1000); });
+    if (mode !== 'countdown') return;
+  }
+  beginRecording();
+}
+function stopRecording() {
+  if (!recorder || recorder.state === 'inactive') return;
+  const dur = elapsed(); recorder._dur = dur; clearInterval(tick); recorder.stop();
+  if (wake) { try { wake.release(); } catch (e) {} wake = null; }
+}
+async function finishRecording() {
+  const dur = recorder._dur; const blob = new Blob(chunks, { type: recMime.split(';')[0] });
+  const lesson = curLesson; const no = takes.filter((t) => t.lesson === lesson).reduce((m, t) => Math.max(m, t.takeNo), 0) + 1;
+  const take = { id: 't' + Date.now().toString(36), lesson, takeNo: no, createdAt: Date.now(), duration: dur, mime: blob.type, blob, source: 'camera',
+    verdict: '', overall: '', notes: flags.map((t, i) => ({ id: 'n' + i, t, tag: 'Flag', text: '' })) };
+  stopCamera(); stage.srcObject = null; setMode('idle');
+  await dbPut(take); takes.push(take); renderTakes(); openTake(take.id); toast('Take ' + no + ' saved');
+}
+$('btnRec').addEventListener('click', () => { if (mode === 'live') startRecordFlow(); else if (mode === 'recording' || mode === 'paused') stopRecording(); });
+$('btnPause').addEventListener('click', () => {
+  if (!recorder) return;
+  if (mode === 'recording') { recorder.pause(); pausedAt = performance.now(); setMode('paused'); }
+  else if (mode === 'paused') { recorder.resume(); pausedTotal += performance.now() - pausedAt; setMode('recording'); }
+});
+function flag() {
+  if (mode !== 'recording' && mode !== 'paused') return;
+  flags.push(Math.round(elapsed() * 10) / 10); const f = $('flash'); f.hidden = false; f.textContent = 'Flagged ' + fmt(elapsed());
+  clearTimeout(flag.h); flag.h = setTimeout(() => { f.hidden = true; }, 1400);
+}
+$('btnFlag').addEventListener('click', flag);
+document.addEventListener('keydown', (e) => {
+  if (e.metaKey || e.ctrlKey || e.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+  const k = e.key.toLowerCase();
+  if (k === 'r') { e.preventDefault(); $('btnRec').click(); } else if (k === 'p') { e.preventDefault(); $('btnPause').click(); } else if (k === 'f') { e.preventDefault(); flag(); }
+});
+
+/* ---------- import / phone camera ---------- */
+$('btnPhone').addEventListener('click', () => $('filePhone').click());
+$('btnImport').addEventListener('click', () => $('fileImport').click());
+async function importFile(file, source) {
+  if (!file) return;
+  if (!/^video\//.test(file.type) && !/\.(mp4|mov|webm|m4v)$/i.test(file.name)) { toast('That is not a video file'); return; }
+  const dur = await probeDuration(file);
+  const no = takes.filter((t) => t.lesson === curLesson).reduce((m, t) => Math.max(m, t.takeNo), 0) + 1;
+  const take = { id: 't' + Date.now().toString(36), lesson: curLesson, takeNo: no, createdAt: Date.now(), duration: dur, mime: file.type || 'video/mp4', blob: file, source, verdict: '', overall: '', notes: [] };
+  await dbPut(take); takes.push(take); if (mode === 'live') { stopCamera(); } renderTakes(); openTake(take.id); toast('Video added as take ' + no);
+}
+function probeDuration(blob) {
+  return new Promise((res) => {
+    const v = document.createElement('video'); const u = URL.createObjectURL(blob); v.preload = 'metadata'; v.muted = true;
+    const done = (d) => { URL.revokeObjectURL(u); res(isFinite(d) ? d : 0); };
+    v.onloadedmetadata = () => { if (v.duration === Infinity) { v.currentTime = 1e7; v.ontimeupdate = () => { v.ontimeupdate = null; done(v.duration); }; } else done(v.duration); };
+    v.onerror = () => done(0); v.src = u;
+  });
+}
+['filePhone', 'fileImport'].forEach((id) => $(id).addEventListener('change', (e) => { importFile(e.target.files[0], id === 'filePhone' ? 'phone' : 'import'); e.target.value = ''; }));
+
+/* ---------- takes list ---------- */
+function renderTakes() {
+  const all = $('chkAll').checked;
+  const list = takes.filter((t) => all || t.lesson === curLesson).sort((a, b) => b.createdAt - a.createdAt);
+  $('noTakes').hidden = list.length > 0;
+  $('takes').innerHTML = list.map((t) => {
+    const L = LESSONS[t.lesson]; const d = new Date(t.createdAt);
+    return '<li class="take" tabindex="0" role="button" data-id="' + t.id + '" aria-current="' + (t.id === curId) + '"><div><b>' + (all ? 'Lesson ' + (t.lesson + 1) + ' · ' : '') + 'Take ' + t.takeNo + (all ? ' · ' + esc(L.n) : '') + '</b><small>' +
+      d.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) + ' · ' + fmt(t.duration) + ' of ' + L.dur + ' · ' + t.notes.length + ' note' + (t.notes.length === 1 ? '' : 's') +
+      '</small></div>' + (t.verdict ? '<span class="pill ' + t.verdict + '">' + VERDICT_LABEL[t.verdict] + '</span>' : '<span class="pill">No verdict</span>') + '</li>';
+  }).join('');
+}
+$('chkAll').addEventListener('change', renderTakes);
+const pickTake = (e) => { const li = e.target.closest('.take'); if (li && (e.type === 'click' || e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openTake(li.dataset.id); } };
+$('takes').addEventListener('click', pickTake); $('takes').addEventListener('keydown', pickTake);
+
+/* ---------- review ---------- */
+const cur = () => takes.find((t) => t.id === curId);
+function clearReviewUrl() { if (objUrl) { URL.revokeObjectURL(objUrl); objUrl = null; } }
+function openTake(id) {
+  const t = takes.find((x) => x.id === id); if (!t) return;
+  if (mode === 'recording' || mode === 'paused' || mode === 'countdown') return;
+  stopCamera(); clearReviewUrl(); curId = id;
+  if (t.lesson !== curLesson) { curLesson = t.lesson; $('selLesson').value = t.lesson; renderLesson(); }
+  objUrl = URL.createObjectURL(t.blob); stage.srcObject = null; stage.classList.remove('mirror'); stage.muted = false; stage.controls = true; stage.src = objUrl;
+  stage.onloadedmetadata = () => { if (stage.duration === Infinity) { stage.currentTime = 1e7; stage.ontimeupdate = () => { stage.ontimeupdate = null; stage.currentTime = 0; drawTimeline(); }; } else drawTimeline(); };
+  setMode('review'); $('review').hidden = false; $('timeline').hidden = false;
+  $('reviewTitle').textContent = 'Review · Lesson ' + (t.lesson + 1) + ' take ' + t.takeNo;
+  $('overall').value = t.overall || ''; renderVerdict(); renderNotes(); renderTakes(); drawTimeline(); updateNoteBtn();
+  $('review').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+const vidLen = (t) => (isFinite(stage.duration) && stage.duration > 0 ? stage.duration : t.duration) || 1;
+function drawTimeline() {
+  const t = cur(); if (!t) return; const len = vidLen(t);
+  $('timeline').innerHTML = t.notes.map((n) => '<button type="button" data-tag="' + esc(n.tag) + '" data-t="' + n.t + '" style="left:' + Math.min(99, (n.t / len) * 100) + '%" aria-label="' + esc(n.tag) + ' note at ' + fmt(n.t) + '" title="' + fmt(n.t) + ' ' + esc(n.tag) + '"></button>').join('');
+}
+$('timeline').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) seek(+b.dataset.t); });
+function seek(s) { stage.currentTime = Math.max(0, s - 1); stage.play().catch(() => {}); }
+function updateNoteBtn() { $('btnNote').textContent = 'Add at ' + fmt(stage.currentTime); }
+stage.addEventListener('timeupdate', () => { if (mode === 'review') updateNoteBtn(); });
+stage.addEventListener('seeked', () => { if (mode === 'review') updateNoteBtn(); });
+async function saveCur() { const t = cur(); if (t) await dbPut(t); }
+function renderVerdict() { const t = cur(); document.querySelectorAll('.verdicts .btn').forEach((b) => b.setAttribute('aria-pressed', String(!!t && t.verdict === b.dataset.v))); }
+document.querySelectorAll('.verdicts .btn').forEach((b) => b.addEventListener('click', () => { const t = cur(); if (!t) return; t.verdict = t.verdict === b.dataset.v ? '' : b.dataset.v; renderVerdict(); renderTakes(); saveCur(); }));
+function renderNotes() {
+  const t = cur(); if (!t) return;
+  const list = t.notes.slice().sort((a, b) => a.t - b.t);
+  $('notes').innerHTML = list.length ? list.map((n) => '<li class="note"><button class="time" data-t="' + n.t + '" title="Jump to this moment">' + fmt(n.t) + '</button><span class="tag">' + esc(n.tag) + '</span><span class="txt' + (n.text ? '' : ' blank') + '">' + (n.text ? esc(n.text) : 'Flagged while recording. Add what to change.') + '</span><button class="x" data-id="' + n.id + '" aria-label="Delete note">×</button></li>').join('')
+    : '<li class="hint">No notes yet. Play the take, pause where something needs a change, and add a note at that moment.</li>';
+  drawTimeline();
+}
+$('notes').addEventListener('click', (e) => {
+  const tb = e.target.closest('.time'); if (tb) { seek(+tb.dataset.t); return; }
+  const x = e.target.closest('.x'); const t = cur();
+  if (x && t) { t.notes = t.notes.filter((n) => n.id !== x.dataset.id); renderNotes(); renderTakes(); saveCur(); }
+});
+function addNote() {
+  const t = cur(); if (!t) return; const text = $('noteText').value.trim();
+  if (!stage.paused) stage.pause();
+  t.notes.push({ id: 'n' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5), t: Math.round(stage.currentTime * 10) / 10, tag: $('noteTag').value, text });
+  $('noteText').value = ''; renderNotes(); renderTakes(); saveCur();
+}
+$('btnNote').addEventListener('click', addNote);
+$('noteText').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addNote(); } });
+$('noteText').addEventListener('focus', () => { if (mode === 'review' && !stage.paused) stage.pause(); });
+let overallH; $('overall').addEventListener('input', () => { const t = cur(); if (!t) return; t.overall = $('overall').value; clearTimeout(overallH); overallH = setTimeout(saveCur, 400); });
+
+/* ---------- save / share ---------- */
+function download(blob, name) {
+  const u = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000);
+}
+const ext = (t) => (/mp4|quicktime/.test(t.mime) ? 'mp4' : 'webm');
+const baseName = (t) => 'fidara-lesson-' + (t.lesson + 1) + '-take-' + t.takeNo;
+$('btnSaveVideo').addEventListener('click', () => { const t = cur(); if (t) { download(t.blob, baseName(t) + '.' + ext(t)); toast('Saving ' + baseName(t) + '.' + ext(t)); } });
+$('btnSaveNotes').addEventListener('click', () => {
+  const t = cur(); if (!t) return; const L = LESSONS[t.lesson];
+  const lines = ['FIDARA LESSON REVIEW', 'Lesson ' + (t.lesson + 1) + ': ' + L.n + ' (take ' + t.takeNo + ')', 'Recorded: ' + new Date(t.createdAt).toLocaleString(), 'Length: ' + fmt(t.duration) + ' (audio lesson is ' + L.dur + ')', 'Verdict: ' + (t.verdict ? VERDICT_LABEL[t.verdict] : 'none yet'), '', 'NOTES'];
+  t.notes.slice().sort((a, b) => a.t - b.t).forEach((n) => lines.push('[' + fmt(n.t) + '] ' + n.tag + ': ' + (n.text || '(flagged, no text)')));
+  if (!t.notes.length) lines.push('(none)');
+  lines.push('', 'OVERALL', t.overall || '(none)', '');
+  download(new Blob([lines.join('\n')], { type: 'text/plain' }), baseName(t) + '-review.txt'); toast('Review notes saved');
+});
+let delArm = 0;
+$('btnDelete').addEventListener('click', async () => {
+  const t = cur(); if (!t) return;
+  if (!delArm) { delArm = 1; $('btnDelete').textContent = 'Tap again to delete'; setTimeout(() => { delArm = 0; $('btnDelete').textContent = 'Delete this take'; }, 3000); return; }
+  delArm = 0; $('btnDelete').textContent = 'Delete this take';
+  await dbDel(t.id); takes = takes.filter((x) => x.id !== t.id); curId = null; clearReviewUrl(); stage.removeAttribute('src'); stage.load(); stage.controls = false;
+  $('review').hidden = true; $('timeline').hidden = true; setMode('idle'); renderTakes(); toast('Take deleted');
+});
+
+/* ---------- boot ---------- */
+(async function boot() {
+  try { const s = parseInt(localStorage.getItem('fidara_studio_lesson'), 10); if (s >= 0 && s < LESSONS.length) curLesson = s; } catch (e) {}
+  $('selLesson').value = curLesson;
+  takes = await dbAll(); renderLesson(); setMode('idle');
+  if (memOnly) $('storeHint').textContent = 'This browser is not keeping takes between visits. Save each video and its notes before you close the page.';
+  else { try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {} }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.isSecureContext) {
+    showNoCamera(window.isSecureContext ? 'This browser cannot open a live camera.' : 'Live camera needs a secure page (https).');
+  }
+})();
+window.addEventListener('beforeunload', (e) => { if (mode === 'recording' || mode === 'paused') { e.preventDefault(); e.returnValue = ''; } });
+</script>
+</body>
+</html>

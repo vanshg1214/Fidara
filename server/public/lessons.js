@@ -1,0 +1,51 @@
+/* Single source of course copy. Used by index.html (customers) and studio.html (Charlotte).
+   Keep the order in step with LESSONS in server/server.js.
+   n name · g goal · s steps [title, text] · m common mistakes · r ready when · p practice · dur audio length */
+window.FIDARA_CHAPTERS = [
+  { name: 'Foundations', blurb: 'Name, Sit and Down: the building blocks.', from: 1, to: 3 },
+  { name: 'Control', blurb: 'Come, Stay and Leave it: reliable in real life.', from: 4, to: 6 },
+  { name: 'Everyday life', blurb: 'Leash, crate and calm handling.', from: 7, to: 9 },
+  { name: 'Show-off', blurb: 'Put it all together with a first trick.', from: 10, to: 10 }
+];
+window.FIDARA_LESSONS = [
+  { n: 'Name recognition', g: 'Teach your dog to turn and look at you every time you say their name.', dur: '2:39',
+    s: [['The Yes! sound', 'Say “Yes!” in a bright voice, then treat right away. Five times, nothing else.'], ['Say the name once', 'Stand two to six feet away. The instant your dog looks, say “Yes!” and treat at nose height.'], ['Add distance and distractions', 'Practice farther away, from behind your dog, from another room, then with a toy on the floor.']],
+    m: ['Say the name once, then wait', 'Never use the name to scold', 'Reward after the look, not before'],
+    r: 'Your dog turns to look at you on 8 of 10 tries, including from another room.', p: 'Three short sessions a day, ten repetitions each.' },
+  { n: 'Sit', g: 'Teach your dog to sit when you say “Sit” or give the hand signal.', dur: '3:06',
+    s: [['Lure the sit', 'Hold a treat at the nose, move it up and slightly back. As the nose goes up, the rear goes down. Say “Yes!” the instant it touches the floor.'], ['Fade the treat, add the word', 'Use an empty hand with the same motion, then say “Sit” once just before you move.'], ['Practice in new places', 'Other rooms first, then outside.']],
+    m: ['Dog jumps? Your hand is too high', 'Never push the rear down', 'Say “Yes!” the instant the rear lands'],
+    r: 'Your dog sits to the word alone on 8 of 10 tries, in two different rooms.', p: 'Three short sessions a day, eight repetitions each.' },
+  { n: 'Down', g: 'Teach your dog to lie down, elbows and belly on the floor, when you say “Down”.', dur: '3:01',
+    s: [['Lure the down', 'From a sit, lower the treat between the front paws, then slide it toward you along the floor, like drawing the letter L.'], ['If your dog won’t go down', 'Sit with your knees up like a tunnel and hold a treat under them so your dog crawls under.'], ['Fade the treat, add the word', 'Empty hand first, then say “Down” once just before the hand moves.']],
+    m: ['Never push your dog down', 'Reward while your dog is still down', 'Don’t practice on a slippery floor'],
+    r: 'Your dog lies down to the word alone on 8 of 10 tries, in two different rooms.', p: 'Three short sessions a day, eight repetitions each.' },
+  { n: 'Come', g: 'Teach your dog to run to you every time you say “Come”.', dur: '2:57',
+    s: [['Make coming wonderful', 'Say “Come!” once, crouch and open your arms. When your dog arrives, give a jackpot of several treats.'], ['Build distance', 'Six feet, ten feet, another room. Run backward to make it a game. Outdoors, use a fenced area or a long line.'], ['Follow the recall rules', 'Never call your dog to scold them or end the fun, and never chase.']],
+    m: ['Say “Come” once, then be more interesting', 'Don’t call when your dog is too distracted', 'Pay big for every recall'],
+    r: 'Your dog comes from another room on 8 of 10 calls, and on a long line outdoors with mild distractions.', p: 'Three short sessions a day, five recalls each.' },
+  { n: 'Stay', g: 'Teach your dog to hold a sit or down until you say the release word.', dur: '2:45',
+    s: [['Teach the release word', 'Ask for a sit, say “Stay” with a flat palm, count one second, treat, then say “Okay!” so your dog moves.'], ['Build time, then distance', 'One second to ten seconds. Then one step back, three steps, six feet, then out of sight for a second.'], ['Add distractions last', 'Try a bouncing ball or a family member walking by, only once time and distance are easy.']],
+    m: ['Don’t raise time, distance and distractions all at once', 'Don’t forget “Okay”, or your dog invents their own release', 'Use shorter times than you think you need'],
+    r: 'Your dog holds a stay for ten seconds with you six feet away, on 8 of 10 tries.', p: 'Three short sessions a day, six repetitions each.' },
+  { n: 'Leave it', g: 'Teach your dog to turn away from an item or food on the floor.', dur: '3:26',
+    s: [['Closed fist', 'Hold plain food in your fist. Wait for your dog to pull away, say “Yes!” and treat from your other hand.'], ['Open palm, then floor', 'Move from an open palm to food on the floor covered by your hand or foot.'], ['Uncovered and dropped items', 'On a leash, place food uncovered, then drop it from standing height.']],
+    m: ['Never give your dog the food they were told to leave', 'Go one level at a time', 'Say “Leave it” once'],
+    r: 'Your dog ignores food on the floor at Level 4 on 8 of 10 tries.', p: 'Three short sessions a day, six repetitions each, one level at a time.' },
+  { n: 'Loose leash', g: 'Teach your dog to walk beside you with a slack leash instead of pulling.', dur: '2:21',
+    s: [['Reward being beside you', 'Hold treats at your hip. Say “Let’s go”, step, and reward your dog for staying next to you.'], ['When the leash gets tight', 'Stop like a tree. When it goes slack, say “Yes!”, reward and walk on.'], ['Reward less often', 'Every three steps, then five, then ten. Use sniff breaks as a reward.']],
+    m: ['Don’t walk on while the leash is tight', 'Never yank the leash', 'Start somewhere quiet, not exciting'],
+    r: 'Your dog walks twenty steps beside you on a slack leash, on a quiet street, on 8 of 10 tries.', p: 'Two or three five-minute walks a day.' },
+  { n: 'Crate & settle', g: 'Teach your dog to go into a crate willingly and relax there or on a mat.', dur: '2:55',
+    s: [['Make the crate a good place', 'Toss treats just inside, say “Crate” as your dog steps in, and feed meals there with the door open.'], ['Close the door', 'Start with two or three seconds, open before your dog fusses, then build to a few minutes.'], ['Settle on a mat', 'Reward calm behavior on a mat every few seconds, then less often.']],
+    m: ['Don’t shut the door too soon or for too long', 'Don’t open the door while your dog whines', 'Never use the crate when you’re angry'],
+    r: 'Your dog walks into the crate on the word “Crate” and rests quietly with the door closed for five minutes, on 8 of 10 tries.', p: 'Three short sessions a day, building from seconds to minutes.' },
+  { n: 'Gentle handling', g: 'Teach your dog to relax while you touch paws, ears, mouth and body, so grooming and vet visits are calm.', dur: '3:11',
+    s: [['Touch, then treat', 'Always the same pattern: touch for one second, say “Yes!”, treat.'], ['Body, paws, ears, mouth', 'Start where your dog likes to be touched, then paws, ears and lips, a little at a time.'], ['The brush and the cue', 'Show the brush, touch it to the shoulder, brush one stroke. Say “Check” before each touch.']],
+    m: ['Never hold your dog still while they struggle', 'Keep each touch to one second at first', 'Don’t start with the mouth or paws on day one'],
+    r: 'Your dog stays relaxed while you hold a paw for five seconds, lift an ear, and lift a lip for three seconds, on 8 of 10 tries.', p: 'A few short sessions a day, one body part at a time.' },
+  { n: 'First trick: Spin', g: 'Teach your dog to spin in a circle on cue, and show off everything you’ve learned.', dur: '2:45',
+    s: [['Lure the spin', 'Move a treat in a wide circle by your dog’s side. Reward a quarter turn, then half, three quarters, a full circle.'], ['Fade the treat, add the word', 'Use an empty hand, then say “Spin” once just before the signal.'], ['Put it together', 'Mix in any skills your dog knows: Name, Sit, Down, Stay, “Okay”, then Spin. Finish with a jackpot of treats.']],
+    m: ['Keep the circle slow and close', 'Don’t ask for a full circle too soon', 'Keep it playful'],
+    r: 'Your dog spins to the word alone on 8 of 10 tries.', p: 'Three short sessions a day, six repetitions each.' }
+];
