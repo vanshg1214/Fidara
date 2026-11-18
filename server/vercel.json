@@ -1,6 +1,11 @@
 {
   "version": 2,
+  "cleanUrls": true,
   "rewrites": [
+    { "source": "/join", "destination": "/join.html" },
+    { "source": "/install", "destination": "/install.html" },
+    { "source": "/app", "destination": "/install.html" },
+    { "source": "/download", "destination": "/install.html" },
     { "source": "/(.*)", "destination": "/server.js" }
   ]
 }
