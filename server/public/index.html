@@ -252,6 +252,31 @@ textarea.in{min-height:84px;resize:vertical}
 .side a.cl.d i{background:var(--sun);color:var(--deep)}
 .side a.cl[aria-current=page] i{background:var(--sun);color:var(--deep)}
 
+/* course locking & guide */
+.course.locked{opacity:.65;cursor:not-allowed;filter:grayscale(.35)}
+.course.locked:hover{transform:none;box-shadow:none}
+.course.locked .thumb .play{background:rgba(255,255,255,.6);box-shadow:none}
+.course.locked .meta{color:var(--muted)}
+.side a.cl.locked{opacity:.55;cursor:not-allowed}
+.side a.cl.locked i{background:rgba(0,0,0,.08);color:var(--muted)}
+
+.lesson-guide{background:var(--paper);border:2px solid var(--pale);border-radius:20px;padding:18px 22px;margin:20px 0 24px;box-shadow:var(--shadow)}
+.guide-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.guide-badge{display:inline-flex;align-items:center;gap:6px;background:var(--mint);color:var(--forest);font-family:'Poppins',sans-serif;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:999px}
+.guide-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;color:var(--deep)}
+.guide-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.g-step{display:flex;gap:12px;align-items:flex-start}
+.g-step .g-num{flex:none;width:28px;height:28px;border-radius:50%;background:var(--sun);color:var(--deep);font-family:'Poppins',sans-serif;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center}
+.g-step b{display:block;font-size:14px;color:var(--ink);margin-bottom:2px}
+.g-step p{margin:0;font-size:13px;color:var(--muted);line-height:1.4}
+
+.vid-done-card{background:linear-gradient(135deg,#1F5C45,#0F3325);color:#fff;border-radius:20px;padding:18px 22px;margin:18px 0 0;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;border:2px solid var(--sun);box-shadow:0 8px 24px rgba(15,51,37,.25);animation:fadeIn .3s ease-out}
+.vid-done-card .vdt{display:flex;gap:14px;align-items:center;flex:1 1 280px}
+.vid-done-card .vdt-icon{font-size:32px;flex:none}
+.vid-done-card .vdt b{display:block;font-size:16px;font-family:'Poppins',sans-serif;color:var(--sun)}
+.vid-done-card .vdt p{margin:2px 0 0;font-size:14px;color:var(--pale);line-height:1.4}
+.next-unlocked-card{margin-top:14px;background:var(--sun);color:var(--deep);border-radius:20px;padding:16px 20px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;font-family:'Poppins',sans-serif;font-weight:700}
+
 /* recorder */
 .review{margin:40px 0 56px;background:linear-gradient(160deg,#FFF3C6,#FFE9A0);border:2px solid var(--sun);border-radius:28px;padding:clamp(18px,3.4vw,34px)}
 .review h2{margin:0 0 6px;font-size:clamp(24px,3.6vw,34px);font-weight:800;letter-spacing:-.02em}
@@ -426,13 +451,44 @@ textarea.in{min-height:84px;resize:vertical}
     <div class="lbody">
       <div style="min-width:0">
         <div id="lMedia"></div>
+        <div id="vidDoneCard" class="vid-done-card" hidden></div>
+        <div class="lesson-guide" id="lessonGuide">
+          <div class="guide-header">
+            <span class="guide-badge">🐾 Training Guide</span>
+            <span class="guide-title">How to complete this course</span>
+          </div>
+          <div class="guide-steps">
+            <div class="g-step">
+              <span class="g-num">1</span>
+              <div>
+                <b>1. Watch the video demo</b>
+                <p>Observe Charlotte's cue, hand movement, and reward timing.</p>
+              </div>
+            </div>
+            <div class="g-step">
+              <span class="g-num">2</span>
+              <div>
+                <b>2. Practice with your puppy</b>
+                <p>Follow the 3 drill steps below in short 2–3 minute sessions.</p>
+              </div>
+            </div>
+            <div class="g-step">
+              <span class="g-num">3</span>
+              <div>
+                <b>3. Check test & mark complete</b>
+                <p>Once your puppy passes the “Ready when” test, tap the button below to unlock the next course!</p>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="steps" id="lSteps"></div>
         <div class="boxes">
           <div style="background:var(--mint)"><div class="k">Common mistakes</div><ul id="lMist"></ul></div>
           <div class="ready"><div class="k">Ready when</div><b id="lReady"></b></div>
           <div style="border:2px dashed #BFC8BE;grid-column:1/-1"><div class="k">Practice</div><span id="lPrac" style="color:var(--muted)"></span></div>
         </div>
-        <div class="donebar"><div><b class="pop" id="doneTitle"></b><br><span>Tick it off when your puppy passes the “ready when” test.</span></div><button class="pill green" id="bDone"></button></div>
+        <div class="donebar" id="doneBar"><div><b class="pop" id="doneTitle"></b><br><span id="doneSub">Tick it off when your puppy passes the “ready when” test.</span></div><button class="pill green" id="bDone"></button></div>
+        <div id="nextUnlockedBanner" class="next-unlocked-card" hidden></div>
       </div>
       <aside class="side" aria-label="All courses"><div class="card"><h3>All courses</h3><div id="sideList"></div></div></aside>
     </div>
@@ -542,6 +598,11 @@ const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls)
 const PLAY = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#0F3325" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
 function toast(msg, ms) { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast.h); toast.h = setTimeout(() => { t.hidden = true; }, ms || 2600); }
 const nextUpN = () => { for (let k = 1; k <= 10; k++) if (!done.includes(k)) return k; return 0; };
+const isUnlocked = n => {
+  if (n <= 1) return true;
+  for (let k = 1; k < n; k++) if (!done.includes(k)) return false;
+  return true;
+};
 function ringSvg(n, size, stroke) {
   const r = (size - stroke) / 2, c = 2 * Math.PI * r;
   return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" aria-hidden="true"><circle cx="' + size / 2 + '" cy="' + size / 2 + '" r="' + r + '" fill="none" stroke="#E7EFE9" stroke-width="' + stroke + '"/><circle cx="' + size / 2 + '" cy="' + size / 2 + '" r="' + r + '" fill="none" stroke="#FFC93C" stroke-width="' + stroke + '" stroke-linecap="round" stroke-dasharray="' + c + '" stroke-dashoffset="' + c * (1 - n / 10) + '" style="transition:stroke-dashoffset .6s"/></svg>';
@@ -600,9 +661,10 @@ $('regForm').addEventListener('submit', e => {
   $('regErr').innerHTML = ''; if (err) { $('regErr').appendChild(el('div', 'msg err', err)); return; }
   reg = Object.assign(f, { age, estoyAqui: true, consent: true, termsVersion: TERMS_VERSION, marketing: $('rMarketing').checked, at: new Date().toISOString() });
   store.set('fidara_reg', reg); syncReg();
-  if (wantLesson) { const h = '#/lesson/' + wantLesson; wantLesson = 0; if (location.hash === h) route(); else location.hash = h; }
-  else { route(); location.hash = '#courses'; setTimeout(() => { const c = $('courses'); c && c.scrollIntoView(); }, 30); }
-  toast('Welcome, ' + f.name + '! Your courses are open.');
+  wantLesson = 0;
+  location.hash = '#/lesson/1';
+  route();
+  toast('Welcome, ' + f.name + '! Starting with Course 1: Name recognition.', 4000);
 });
 let resetArmed = null;
 $('bReset').onclick = () => {
@@ -612,14 +674,33 @@ $('bReset').onclick = () => {
 /* ---------- home ---------- */
 function courseCard(i, nextUp) {
   const n = i + 1, c = L[i], chIdx = CH.findIndex(x => n >= x.from && n <= x.to);
-  const a = el('a', 'course' + (n === nextUp && reg ? ' next' : '')); a.href = '#/lesson/' + n;
+  const unlocked = isUnlocked(n);
+  const isDone = done.includes(n);
+  const isNext = n === nextUp && reg;
+  const a = el('a', 'course' + (isNext ? ' next' : '') + (!unlocked && reg ? ' locked' : ''));
+  a.href = '#/lesson/' + n;
+  if (!unlocked && reg) {
+    a.onclick = e => {
+      e.preventDefault();
+      toast('Course ' + n + ' is locked. Complete Course ' + (n - 1) + ' first!', 3000);
+    };
+  }
   const th = el('div', 'thumb'); th.dataset.c = chIdx + 1;
   th.append(el('span', 'bn', String(n).padStart(2, '0')));
-  const pl = el('span', 'play'); pl.innerHTML = PLAY; th.append(pl);
-  if (done.includes(n)) th.append(el('span', 'ck', 'Done ✓'));
-  th.append(el('span', 'soon', V[n] ? 'Video' : 'Video soon'));
+  const pl = el('span', 'play');
+  if (!unlocked && reg) {
+    pl.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#55705F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+  } else {
+    pl.innerHTML = PLAY;
+  }
+  th.append(pl);
+  if (isDone) th.append(el('span', 'ck', 'Done ✓'));
+  else if (!unlocked && reg) th.append(el('span', 'soon', 'Locked 🔒'));
+  else th.append(el('span', 'soon', V[n] ? 'Video' : 'Video soon'));
   const body = el('div', 'cbody'); body.append(el('h3', '', c.n), el('p', '', c.g));
-  const m = el('div', 'meta'); m.append(el('span', '', c.dur + ' lesson'), el('span', '', done.includes(n) ? 'Review again →' : (n === nextUp && reg ? 'Next up →' : 'Open →')));
+  const m = el('div', 'meta');
+  const actionText = isDone ? 'Review again →' : (!unlocked && reg ? 'Finish Course ' + (n - 1) + ' to unlock' : (isNext ? 'Next up →' : 'Start →'));
+  m.append(el('span', '', c.dur + ' lesson'), el('span', '', actionText));
   body.append(m); a.append(th, body); return a;
 }
 function renderHome() {
@@ -657,9 +738,30 @@ function renderLesson(n) {
   cur = n; const c = L[n - 1], ch = CH.find(x => n >= x.from && n <= x.to);
   $('lNum').textContent = n; $('lTitle').textContent = c.n; $('lGoal').textContent = c.g; $('lChap').textContent = ch.name + ' · course ' + n + ' of 10';
   document.title = n + '. ' + c.n + ' · Fidara';
+  const vdc = $('vidDoneCard'); if (vdc) vdc.hidden = true;
+  const nub = $('nextUnlockedBanner'); if (nub) nub.hidden = true;
   const m = $('lMedia'); m.innerHTML = ''; m.className = VERT ? 'vert' : '';
-  if (V[n]) { const w = el('div', 'vplayer'); const vid = el('video'); vid.controls = true; vid.playsInline = true; vid.preload = 'metadata'; vid.src = V[n]; w.appendChild(vid); m.appendChild(w); }
-  else {
+  if (V[n]) {
+    const w = el('div', 'vplayer');
+    const vid = el('video');
+    vid.controls = true;
+    vid.playsInline = true;
+    vid.preload = 'metadata';
+    vid.src = V[n];
+    vid.onended = () => {
+      const card = $('vidDoneCard');
+      if (card) {
+        const dogName = (reg && reg.dog) || 'your puppy';
+        const nextNum = n < 10 ? n + 1 : null;
+        card.innerHTML = '<div class="vdt"><div class="vdt-icon">🎉</div><div><b>Video finished! Now practice with ' + dogName + '.</b><p>Follow the 3 drill steps below. When ' + dogName + ' passes the “Ready when” test, tap the green <b>“Mark Complete”</b> button below to unlock ' + (nextNum ? 'Course ' + nextNum : 'Graduation') + '.</p></div></div><button class="pill sun small" id="bJumpDone">Jump to Practice & Complete ↓</button>';
+        card.hidden = false;
+        const btn = $('bJumpDone');
+        if (btn) btn.onclick = () => { const db = $('doneBar'); if (db) db.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
+      }
+    };
+    w.appendChild(vid);
+    m.appendChild(w);
+  } else {
     const ph = el('div', 'vph'); ph.setAttribute('role', 'img'); ph.setAttribute('aria-label', 'Video lesson coming soon');
     ph.innerHTML = '<div class="in-v"><div class="big-play">' + PLAY.replace('width="22" height="22"', 'width="38" height="38"') + '</div><b>Video lesson coming soon</b><span>Course ' + n + ' · ' + c.dur + '.</span></div>';
     m.appendChild(ph);
@@ -669,9 +771,26 @@ function renderLesson(n) {
   $('lMist').innerHTML = ''; c.m.forEach(x => $('lMist').appendChild(el('li', '', x)));
   $('lReady').textContent = c.r; $('lPrac').textContent = c.p;
   $('prevL').hidden = n === 1; $('prevL').href = '#/lesson/' + (n - 1);
-  $('nextL').hidden = n === 10; $('nextL').href = '#/lesson/' + (n + 1);
+  $('nextL').hidden = n === 10;
+  
   const sl = $('sideList'); sl.innerHTML = '';
-  L.forEach((x, i) => { const a = el('a', 'cl' + (done.includes(i + 1) ? ' d' : '')); a.href = '#/lesson/' + (i + 1); if (i + 1 === n) a.setAttribute('aria-current', 'page'); a.append(el('i', '', done.includes(i + 1) ? '✓' : i + 1), document.createTextNode(x.n)); sl.appendChild(a); });
+  L.forEach((x, i) => {
+    const num = i + 1;
+    const isDone = done.includes(num);
+    const unlocked = isUnlocked(num);
+    const a = el('a', 'cl' + (isDone ? ' d' : '') + (!unlocked ? ' locked' : ''));
+    a.href = '#/lesson/' + num;
+    if (num === n) a.setAttribute('aria-current', 'page');
+    if (!unlocked) {
+      a.onclick = e => {
+        e.preventDefault();
+        toast('Course ' + num + ' is locked. Complete Course ' + (num - 1) + ' first!', 3000);
+      };
+    }
+    const iconContent = isDone ? '✓' : (!unlocked ? '🔒' : num);
+    a.append(el('i', '', iconContent), document.createTextNode(x.n));
+    sl.appendChild(a);
+  });
   $('topCta').textContent = 'All courses'; $('topCta').href = '#/'; $('miniProg').hidden = true;
   paintDone();
   resetRecorder();
@@ -680,15 +799,72 @@ function renderLesson(n) {
 }
 function paintDone() {
   const d = done.includes(cur);
-  $('doneTitle').textContent = d ? 'Course ' + cur + ' done ✓' : 'Did your puppy pass?';
-  $('bDone').textContent = d ? 'Done ✓ (tap to undo)' : 'My puppy passed the ready test';
+  const dogName = (reg && reg.dog) || 'your puppy';
+  const nextN = cur + 1;
+  $('doneTitle').textContent = d ? 'Course ' + cur + ' completed ✓' : 'Did ' + dogName + ' pass the test?';
+  const sub = $('doneSub');
+  if (sub) {
+    sub.textContent = d
+      ? (cur < 10 ? 'Great job! Course ' + nextN + ' (' + L[cur].n + ') is now unlocked.' : 'All 10 courses complete! Graduation day.')
+      : 'Tick it off once ' + dogName + ' passes the “Ready when” test above to unlock ' + (cur < 10 ? 'Course ' + nextN : 'graduation') + '.';
+  }
+  $('bDone').textContent = d ? 'Course ' + cur + ' Done ✓ (tap to undo)' : '✓ Mark Course ' + cur + ' Complete' + (cur < 10 ? ' & Unlock Next' : '');
   $('bDone').className = d ? 'pill sun' : 'pill green';
-  [...$('sideList').children].forEach((a, i) => { a.classList.toggle('d', done.includes(i + 1)); a.firstChild.textContent = done.includes(i + 1) ? '✓' : i + 1; });
+
+  const nub = $('nextUnlockedBanner');
+  if (nub) {
+    if (d && cur < 10) {
+      nub.hidden = false;
+      nub.innerHTML = '<span>🎉 Course ' + nextN + ' (' + L[cur].n + ') is unlocked!</span><a class="pill dark small" href="#/lesson/' + nextN + '">Start Course ' + nextN + ' →</a>';
+    } else {
+      nub.hidden = true;
+    }
+  }
+
+  if (cur < 10) {
+    const nextUnlocked = isUnlocked(cur + 1);
+    if (nextUnlocked) {
+      $('nextL').href = '#/lesson/' + nextN;
+      $('nextL').textContent = 'Next course →';
+      $('nextL').className = 'pill sun small';
+      $('nextL').onclick = null;
+    } else {
+      $('nextL').href = 'javascript:void(0)';
+      $('nextL').textContent = 'Course ' + nextN + ' 🔒';
+      $('nextL').className = 'pill line small';
+      $('nextL').onclick = e => {
+        e.preventDefault();
+        const db = $('doneBar');
+        if (db) db.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        toast('Mark Course ' + cur + ' complete below to unlock Course ' + nextN + '!', 3500);
+      };
+    }
+  }
+
+  [...$('sideList').children].forEach((a, i) => {
+    const num = i + 1;
+    const isD = done.includes(num);
+    const unl = isUnlocked(num);
+    a.classList.toggle('d', isD);
+    a.classList.toggle('locked', !unl);
+    a.firstChild.textContent = isD ? '✓' : (!unl ? '🔒' : num);
+    if (!unl) {
+      a.onclick = e => {
+        e.preventDefault();
+        toast('Course ' + num + ' is locked. Complete Course ' + (num - 1) + ' first!', 3000);
+      };
+    } else {
+      a.onclick = null;
+    }
+  });
 }
 $('bDone').onclick = () => {
   const was = done.includes(cur);
   done = was ? done.filter(x => x !== cur) : done.concat(cur).sort((a, b) => a - b); store.set('fidara_done', done); paintDone(); pushProgress();
-  if (!was) toast(done.length >= 10 ? 'All 10 courses done. Graduation day!' : 'Course ' + cur + ' done! ' + done.length + ' of 10 complete.');
+  if (!was) {
+    const dogName = (reg && reg.dog) || 'your puppy';
+    toast(done.length >= 10 ? '🎉 All 10 courses done! Graduation day for ' + dogName + '!' : '🎉 Course ' + cur + ' done! Course ' + (cur + 1) + ' is now unlocked.', 4500);
+  }
 };
 
 /* ---------- router ---------- */
@@ -699,6 +875,12 @@ function route() {
   const n = m ? +m[1] : 0;
   if (mode !== 'idle' && mode !== 'review') resetRecorder();
   if (n >= 1 && n <= 10 && reg) {
+    if (!isUnlocked(n)) {
+      const curNext = nextUpN() || 1;
+      toast('Course ' + n + ' is locked. Complete Course ' + (n - 1) + ' first!', 3500);
+      location.hash = '#/lesson/' + curNext;
+      return;
+    }
     document.body.dataset.view = 'lesson'; $('vHome').hidden = true; $('vLesson').hidden = false; renderLesson(n); window.scrollTo(0, 0); return;
   }
   if (n >= 1 && n <= 10 && !reg) wantLesson = n;
