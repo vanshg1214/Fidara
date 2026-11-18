@@ -382,6 +382,7 @@ const resolvedPublicDir = candidatePublicDirs.find((d) => fs.existsSync(d));
 
 if (resolvedPublicDir) {
   app.use(express.static(resolvedPublicDir, {
+    extensions: ['html'],
     setHeaders: (res, p) => res.set('Cache-Control', /\/(media|fonts)\//.test(p) ? 'public, max-age=604800' : 'no-cache')
   }));
 }
