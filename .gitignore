@@ -3,3 +3,5 @@ node_modules/
 server/uploads/
 server/data/
 *.log
+raw_videos/
+scratch/

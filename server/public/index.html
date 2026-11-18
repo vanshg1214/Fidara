@@ -509,8 +509,19 @@ const PROGRESS_URL = REGISTER_URL.replace(/register$/, 'progress'), RESTORE_URL 
 const TERMS_VERSION = 'draft-2';   // change when terms.html changes; stored with each sign-up as proof of what they agreed to
 const MAX_SECONDS = 300;            // 5 minutes
 const VIDEO_BPS = 1200000;          // about 45 MB for 5 minutes
-const V = { 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: '', 9: '', 10: '' };
-const VIDEO_ASPECT = '16/9';        // shape of the lesson videos: '16/9' wide, or '9/16' vertical (phone style)
+const V = {
+  1: 'media/fidara-lesson-1.mp4',
+  2: 'media/fidara-lesson-2.mp4',
+  3: 'media/fidara-lesson-3.mp4',
+  4: 'media/fidara-lesson-4.mp4',
+  5: 'media/fidara-lesson-5.mp4',
+  6: 'media/fidara-lesson-6.mp4',
+  7: 'media/fidara-lesson-7.mp4',
+  8: 'media/fidara-lesson-8.mp4',
+  9: 'media/fidara-lesson-9.mp4',
+  10: 'media/fidara-lesson-10.mp4'
+};
+const VIDEO_ASPECT = '9/16';        // shape of the lesson videos: '16/9' wide, or '9/16' vertical (phone style)
 document.documentElement.style.setProperty('--va', VIDEO_ASPECT);
 const VERT = (a => a[1] > a[0])(VIDEO_ASPECT.split('/').map(Number));
 const A = n => 'media/fidara-lesson-' + n + '-audio.mp4';
