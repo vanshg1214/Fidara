@@ -661,13 +661,9 @@ function renderLesson(n) {
   if (V[n]) { const w = el('div', 'vplayer'); const vid = el('video'); vid.controls = true; vid.playsInline = true; vid.preload = 'metadata'; vid.src = V[n]; w.appendChild(vid); m.appendChild(w); }
   else {
     const ph = el('div', 'vph'); ph.setAttribute('role', 'img'); ph.setAttribute('aria-label', 'Video lesson coming soon');
-    ph.innerHTML = '<div class="in-v"><div class="big-play">' + PLAY.replace('width="22" height="22"', 'width="38" height="38"') + '</div><b>Video lesson coming soon</b><span>Course ' + n + ' · ' + c.dur + '. Listen to the audio version below in the meantime.</span></div>';
+    ph.innerHTML = '<div class="in-v"><div class="big-play">' + PLAY.replace('width="22" height="22"', 'width="38" height="38"') + '</div><b>Video lesson coming soon</b><span>Course ' + n + ' · ' + c.dur + '.</span></div>';
     m.appendChild(ph);
   }
-  const p = el('div', 'player'); const ic = el('div', 'ic');
-  ic.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFC93C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13"/></svg>';
-  const tx = el('div', 'tx'); tx.append(el('b', '', 'Audio version · ' + c.dur), document.createTextNode('Listen while you practice.'));
-  const au = el('audio'); au.controls = true; au.preload = 'metadata'; au.src = A(n); p.append(ic, tx, au); m.appendChild(p);
   const st = $('lSteps'); st.innerHTML = '';
   c.s.forEach((x, i) => { const d = el('div'); const b = el('div'); b.append(el('b', '', x[0]), el('p', '', x[1])); d.append(el('span', 'n', i + 1), b); st.appendChild(d); });
   $('lMist').innerHTML = ''; c.m.forEach(x => $('lMist').appendChild(el('li', '', x)));
