@@ -187,6 +187,17 @@ label.f{display:block;font-family:'Poppins',sans-serif;font-weight:600;font-size
 
   <!-- ================= STEP 1: REGISTRATION FORM ================= -->
   <section class="card" id="stepRegister">
+    <div id="existingBanner" class="msg ok" style="margin-bottom:18px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px" hidden>
+      <div>
+        <b style="color:#0F4A23">Found previous registration on this device:</b>
+        <div id="existingDesc" style="font-size:13.5px;color:#28633B"></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button type="button" class="pill sun small" id="bUseExisting" style="min-height:38px;padding:6px 14px;font-size:13.5px">Continue to Download →</button>
+        <button type="button" class="pill line small" id="bClearExisting" style="min-height:38px;padding:6px 14px;font-size:13.5px;border-color:#58B478;color:#0F4A23">Clear & Start Fresh</button>
+      </div>
+    </div>
+
     <div style="margin-bottom:18px">
       <h2 style="font-size:22px;margin:0 0 4px">Your puppy's details</h2>
       <p style="margin:0;font-size:14.5px;color:var(--muted)">Tell us about your puppy to set up your training program and save your progress.</p>
@@ -549,12 +560,28 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
   window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
 }
 
-// Initial state check
+// Initial state check: ALWAYS default to Step 1 (Registration) on load
+showStep('register');
+
 const existingReg = store.get('fidara_reg', null);
 if (existingReg && existingReg.name && existingReg.email) {
-  showStep('install');
-} else {
-  showStep('register');
+  const eb = $('existingBanner');
+  if (eb) {
+    eb.hidden = false;
+    $('existingDesc').textContent = (existingReg.dog || 'Puppy') + ' registered under ' + existingReg.email;
+    $('bUseExisting').onclick = () => showStep('install');
+    $('bClearExisting').onclick = () => {
+      store.del('fidara_reg');
+      store.del('fidara_token');
+      store.del('fidara_install_done');
+      try { document.cookie = 'fidara_token=; path=/; max-age=0'; } catch (e) {}
+      $('regForm').reset();
+      selectedAge = '';
+      [...$('ages').children].forEach(c => c.setAttribute('aria-pressed', 'false'));
+      eb.hidden = true;
+      toast('Previous data cleared. You can now register with new details.');
+    };
+  }
 }
 </script>
 </body>
