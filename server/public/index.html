@@ -593,6 +593,15 @@ let reg = store.get('fidara_reg', null);
 let done = store.get('fidara_done', []); if (!Array.isArray(done)) done = [];
 let reviewUsed = store.get('fidara_review_used', 0);
 let token = store.get('fidara_token', ''); // proves who you are to the server (progress sync, one review per box)
+if (!token) {
+  try {
+    const ck = document.cookie.match(/(?:^|;\s*)fidara_token=([^;]+)/);
+    if (ck) { token = decodeURIComponent(ck[1]); store.set('fidara_token', token); }
+  } catch (e) {}
+}
+if (token && !reg) {
+  restore(token);
+}
 let wantLesson = 0; // lesson to open after registering
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 const PLAY = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#0F3325" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';

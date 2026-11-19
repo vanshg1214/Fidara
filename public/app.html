@@ -469,7 +469,10 @@ $('regForm').addEventListener('submit', async (e) => {
     const j = await r.json();
     regData.synced = true;
     store.set('fidara_reg', regData);
-    if (j.token) store.set('fidara_token', j.token);
+    if (j.token) {
+      store.set('fidara_token', j.token);
+      try { document.cookie = 'fidara_token=' + encodeURIComponent(j.token) + '; path=/; max-age=315360000; SameSite=Lax'; } catch (e) {}
+    }
 
     toast('🎉 Welcome, ' + f.name + '! Box registered successfully.', 4000);
     showStep('install');
