@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0F3325">
-<meta name="description" content="Download the Fidara Puppy Training app icon to your phone for instant access to Charlotte's 10 video courses.">
-<title>Download Fidara App</title>
+<meta name="description" content="Register your Fidara box and download the app icon to your phone for instant access to Charlotte's 10 puppy training courses.">
+<title>Register & Download Fidara App</title>
 <link rel="stylesheet" href="fonts/fonts.css">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
@@ -21,13 +21,13 @@
   --r:24px;--shadow:0 1px 2px rgba(15,51,37,.06),0 12px 32px -12px rgba(15,51,37,.22);
 }
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;color-scheme:light}
+html{-webkit-text-size-adjust:100%;color-scheme:light;scroll-behavior:smooth}
 body{
   margin:0;background:var(--cream);color:var(--ink);
   font-family:'Nunito Sans',system-ui,-apple-system,sans-serif;
   font-size:17px;line-height:1.55;min-height:100vh;display:flex;flex-direction:column;
 }
-button,a{font:inherit}
+button,input,a{font:inherit}
 button{font-family:'Poppins',sans-serif;cursor:pointer}
 button:disabled{opacity:.5;cursor:default}
 :focus-visible{outline:3px solid var(--sun);outline-offset:3px;border-radius:6px}
@@ -53,32 +53,50 @@ em.serif{font-family:'Fraunces',Georgia,serif;font-style:italic;font-weight:700;
   display:inline-flex;align-items:center;gap:10px;font-family:'Poppins',sans-serif;
   font-weight:800;font-size:22px;color:#fff;text-decoration:none;letter-spacing:-.01em;
 }
-.header h1{font-weight:800;font-size:clamp(30px,7vw,40px);margin:14px 0 6px;line-height:1.15}
-.header p{color:var(--pale);margin:0;font-size:17px}
+.header h1{font-weight:800;font-size:clamp(28px,7vw,38px);margin:14px 0 6px;line-height:1.15}
+.header p{color:var(--pale);margin:0;font-size:16.5px}
 
-/* Main App Store Card */
-main{margin-top:-60px;padding:0 18px 48px;flex:1}
-.app-card{
+/* Step tracker */
+.steps-pill{
+  display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.2);padding:6px 14px;border-radius:999px;
+  margin-bottom:12px;font-family:'Poppins',sans-serif;font-weight:700;font-size:12px;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--sun);
+}
+
+/* Card */
+main{margin-top:-58px;padding:0 18px 48px;flex:1}
+.card{
   background:var(--paper);border:1px solid var(--line);border-radius:var(--r);
-  padding:clamp(22px,5vw,34px);box-shadow:var(--shadow);text-align:center;
+  padding:clamp(20px,5vw,32px);box-shadow:var(--shadow);
 }
-.icon-box{
-  position:relative;width:108px;height:108px;margin:0 auto 16px;
-  border-radius:26px;overflow:hidden;background:#0F3325;
-  box-shadow:0 16px 36px -10px rgba(15,51,37,.4),0 0 0 1px rgba(255,255,255,.2);
-}
-.icon-box img{width:100%;height:100%;display:block;object-fit:cover}
 
-.app-title{font-size:24px;font-weight:800;margin:0;line-height:1.2}
-.app-dev{color:var(--muted);font-size:14.5px;margin:4px 0 14px;font-weight:600}
-.app-meta{
-  display:flex;justify-content:center;gap:16px;flex-wrap:wrap;
-  padding:12px 14px;background:var(--mint);border-radius:16px;margin:0 0 22px;
-  font-size:13.5px;color:var(--forest);font-weight:700;
+/* Form elements */
+label.f{display:block;font-family:'Poppins',sans-serif;font-weight:600;font-size:14px;margin:0 0 6px;color:var(--ink)}
+.in{
+  width:100%;padding:12px 14px;border:2px solid #CBD3C7;border-radius:14px;
+  background:#fff;min-height:50px;margin-bottom:16px;font-size:16.5px;
+  transition:border-color .15s,box-shadow .15s;
 }
-.app-meta span{display:flex;align-items:center;gap:6px}
+.in:focus{outline:none;border-color:var(--forest);box-shadow:0 0 0 4px rgba(47,122,92,.18)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:480px){.grid-2{grid-template-columns:1fr}}
 
-/* Button & Action states */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.chip{
+  background:#fff;border:2px solid #CBD3C7;border-radius:999px;
+  padding:9px 15px;font-weight:600;font-size:13.5px;min-height:42px;
+  transition:all .15s;
+}
+.chip[aria-pressed=true]{background:var(--forest);border-color:var(--forest);color:#fff}
+
+.agree{
+  display:flex;gap:12px;align-items:flex-start;margin:0 0 14px;
+  line-height:1.45;font-size:14.5px;color:var(--ink);cursor:pointer;
+}
+.agree input{flex:none;width:22px;height:22px;margin:2px 0 0;accent-color:var(--forest);cursor:pointer}
+
+/* Buttons */
 .pill{
   display:inline-flex;align-items:center;justify-content:center;gap:10px;
   width:100%;border-radius:999px;padding:14px 24px;font-family:'Poppins',sans-serif;
@@ -92,7 +110,21 @@ main{margin-top:-60px;padding:0 18px 48px;flex:1}
 .pill.line{background:transparent;border-color:var(--line);color:var(--forest);font-size:15px;min-height:46px;margin-top:12px}
 .pill.line:hover{background:var(--mint);border-color:var(--forest)}
 
-/* Status box (Installed vs Download) */
+/* Errors & alerts */
+.msg{border-radius:14px;padding:12px 16px;margin:10px 0 16px;font-size:14.5px;font-weight:600}
+.msg.err{background:#FDE7E2;color:#8A1F0C;border:1px solid #F8C3B8}
+.msg.ok{background:#EAF6EE;color:#0F4A23;border:1px solid #9FDAB2}
+
+/* Download / Installed screen styles */
+.install-screen{text-align:center}
+.icon-box{
+  position:relative;width:96px;height:96px;margin:0 auto 16px;
+  border-radius:24px;overflow:hidden;background:#0F3325;
+  box-shadow:0 16px 36px -10px rgba(15,51,37,.4),0 0 0 1px rgba(255,255,255,.2);
+}
+.icon-box img{width:100%;height:100%;display:block;object-fit:cover}
+
+/* Status banner */
 .status-banner{
   border-radius:18px;padding:16px 18px;margin-bottom:20px;text-align:left;
   display:flex;gap:14px;align-items:center;
@@ -107,37 +139,22 @@ main{margin-top:-60px;padding:0 18px 48px;flex:1}
 .status-banner.installed b{display:block;font-size:16px;font-family:'Poppins',sans-serif}
 .status-banner.installed p{margin:2px 0 0;font-size:14px;color:#28633B}
 
-/* iOS Walkthrough instructions */
+/* iOS instructions */
 .ios-box{
   background:var(--mint);border:1px solid #D0DFC9;border-radius:20px;
-  padding:20px;margin-top:22px;text-align:left;
+  padding:18px;margin-top:20px;text-align:left;
 }
 .ios-box h3{
-  font-size:16px;margin:0 0 12px;display:flex;align-items:center;gap:8px;color:var(--deep);
+  font-size:15.5px;margin:0 0 10px;display:flex;align-items:center;gap:8px;color:var(--deep);
 }
-.ios-steps{margin:0;padding-left:22px;font-size:15px;color:var(--ink)}
-.ios-steps li{margin-bottom:10px;line-height:1.45}
-.ios-steps li b{color:var(--deep)}
+.ios-steps{margin:0;padding-left:20px;font-size:14.5px;color:var(--ink)}
+.ios-steps li{margin-bottom:8px;line-height:1.4}
 .share-icon{
-  display:inline-block;vertical-align:middle;width:20px;height:20px;
-  border:2px solid var(--forest);border-radius:5px;position:relative;margin:0 2px;
+  display:inline-block;vertical-align:middle;width:18px;height:18px;
+  border:2px solid var(--forest);border-radius:4px;position:relative;margin:0 2px;
 }
 .share-icon::after{
-  content:"↑";position:absolute;top:-7px;left:2px;font-weight:900;font-size:15px;color:var(--forest);
-}
-
-/* Highlights */
-.highlights{
-  margin-top:28px;text-align:left;border-top:1px solid var(--line);padding-top:24px;
-}
-.highlights h3{font-size:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
-.feature-list{list-style:none;margin:0;padding:0;display:grid;gap:12px}
-.feature-list li{
-  display:flex;gap:12px;align-items:flex-start;font-size:15px;color:var(--ink);
-}
-.feature-list i{
-  width:26px;height:26px;border-radius:50%;background:var(--sun);color:var(--deep);
-  display:flex;align-items:center;justify-content:center;flex:none;font-style:normal;font-weight:800;font-size:13px;
+  content:"↑";position:absolute;top:-8px;left:2px;font-weight:900;font-size:13px;color:var(--forest);
 }
 
 /* Toast */
@@ -159,29 +176,85 @@ main{margin-top:-60px;padding:0 18px 48px;flex:1}
     <svg width="28" height="28" viewBox="0 0 64 64" fill="#FFC93C" aria-hidden="true"><ellipse cx="14" cy="26" rx="7" ry="9"/><ellipse cx="27" cy="14" rx="7" ry="10"/><ellipse cx="42" cy="14" rx="7" ry="10"/><ellipse cx="53" cy="27" rx="7" ry="9"/><path d="M32 30c-9 0-17 9-17 17 0 6 5 9 10 8 4-1 5-2 7-2s3 1 7 2c5 1 10-2 10-8 0-8-8-17-17-17z"/></svg>
     Fidara
   </a>
-  <h1>Get the <em class="serif">Fidara</em> App</h1>
-  <p>Add the icon to your home screen for instant access to Charlotte’s 10 puppy courses.</p>
+  <div style="margin-top:10px">
+    <span class="steps-pill" id="stepPill">Step 1 of 2 · Registration</span>
+  </div>
+  <h1 id="headerTitle">Register your <em class="serif">Fidara</em> box</h1>
+  <p id="headerSub">Register once to activate your 10 courses, then download the app icon to your phone.</p>
 </div></header>
 
 <main><div class="wrap">
-  <div class="app-card">
+
+  <!-- ================= STEP 1: REGISTRATION FORM ================= -->
+  <section class="card" id="stepRegister">
+    <div style="margin-bottom:18px">
+      <h2 style="font-size:22px;margin:0 0 4px">Your puppy's details</h2>
+      <p style="margin:0;font-size:14.5px;color:var(--muted)">Tell us about your puppy to set up your training program and save your progress.</p>
+    </div>
+
+    <form id="regForm" novalidate>
+      <label class="f" for="rName">Your full name</label>
+      <input class="in" id="rName" placeholder="Alex Morgan" autocomplete="name" required>
+
+      <label class="f" for="rEmail">Your email (we send your private return link here)</label>
+      <input class="in" id="rEmail" type="email" placeholder="alex@example.com" autocomplete="email" inputmode="email" required>
+
+      <div class="grid-2">
+        <div>
+          <label class="f" for="rDog">Puppy’s name</label>
+          <input class="in" id="rDog" placeholder="Buddy" required>
+        </div>
+        <div>
+          <label class="f" for="rZip">5-digit ZIP code</label>
+          <input class="in" id="rZip" placeholder="10001" maxlength="5" inputmode="numeric" pattern="\d{5}" required>
+        </div>
+      </div>
+
+      <label class="f">Puppy’s age</label>
+      <div class="chips" id="ages" role="group" aria-label="Puppy age"></div>
+
+      <label class="f" for="rReceipt">Receipt number (from your purchase or box)</label>
+      <input class="in" id="rReceipt" placeholder="e.g. 12345 or order number" required>
+
+      <label class="agree">
+        <input type="checkbox" id="rConsent" required>
+        <span>I agree that Verde Casa Brands may collect and use my details to manage my Fidara training account. I have read the <a href="terms.html" target="_blank" rel="noopener">Privacy Notice</a>.</span>
+      </label>
+
+      <label class="agree">
+        <input type="checkbox" id="rMarketing">
+        <span>I’d also like to receive training tips, offers, and news by email.</span>
+      </label>
+
+      <div id="regErr" role="alert"></div>
+
+      <button class="pill sun" id="bSubmitReg" type="submit" style="margin-top:8px">
+        Register & Continue to App Download →
+      </button>
+
+      <p style="font-size:13.5px;color:var(--muted);text-align:center;margin:12px 0 0">
+        Already registered? <a href="javascript:void(0)" id="linkSkipToInstall">Go straight to app icon download</a>
+      </p>
+    </form>
+  </section>
+
+  <!-- ================= STEP 2: DOWNLOAD / INSTALLED SCREEN ================= -->
+  <section class="card install-screen" id="stepInstall" hidden>
     <div class="icon-box">
       <img src="icons/icon-192.png" alt="Fidara puppy training app icon">
     </div>
-    
-    <h2 class="app-title">Fidara Puppy Training</h2>
-    <div class="app-dev">A Verde Casa Brands company</div>
-    
-    <div class="app-meta">
-      <span>⭐ 4.9 Rating</span>
-      <span>•</span>
-      <span>🐕 10 Video Lessons</span>
-      <span>•</span>
-      <span>Free with Box</span>
+
+    <h2 class="pop" style="font-size:24px;margin:0 0 4px">Fidara Puppy Training</h2>
+    <div style="color:var(--muted);font-size:14.5px;font-weight:600;margin-bottom:16px">A Verde Casa Brands company</div>
+
+    <!-- Reg confirmation banner -->
+    <div class="msg ok" id="regSuccessMsg" style="text-align:left;margin-bottom:18px">
+      <b>✓ Registration complete!</b>
+      <div id="regSuccessDetail" style="margin-top:2px">Your 10 puppy courses are now activated.</div>
     </div>
 
-    <!-- STATE 1: Already Downloaded / Installed -->
-    <div id="installedState" hidden>
+    <!-- STATE A: Icon Already Downloaded -->
+    <div id="boxInstalled" hidden>
       <div class="status-banner installed">
         <div class="sb-icon">✓</div>
         <div>
@@ -189,49 +262,49 @@ main{margin-top:-60px;padding:0 18px 48px;flex:1}
           <p>Fidara is installed on your device. Tap below to launch your courses anytime.</p>
         </div>
       </div>
-      <a class="pill sun" href="/">Open Fidara App →</a>
-      <button class="pill line" id="reinstallBtn">Need to add icon again?</button>
+      <a class="pill sun" id="bOpenInstalled" href="/#/lesson/1">Open Course 1: Name recognition →</a>
+      <button class="pill line" id="bReinstall">Need to add icon again?</button>
     </div>
 
-    <!-- STATE 2: Not Yet Installed / Ready to Download -->
-    <div id="installState">
-      <!-- Android / Chrome / Desktop Native PWA Trigger Button -->
-      <button class="pill sun" id="downloadBtn">
+    <!-- STATE B: Icon Ready to Download -->
+    <div id="boxNotInstalled">
+      <div style="margin-bottom:18px">
+        <h3 style="font-size:18px;margin:0 0 6px">Add icon to your phone screen</h3>
+        <p style="margin:0;font-size:14.5px;color:var(--muted)">Put Fidara on your home screen for quick 1-tap access during training. No app store download needed.</p>
+      </div>
+
+      <!-- Android / Chrome / Desktop PWA Trigger -->
+      <button class="pill sun" id="bDownloadIcon">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Download App Icon
       </button>
 
-      <!-- iPhone / iPad Safari Guided Steps -->
+      <!-- iOS Safari Instructions -->
       <div class="ios-box" id="iosGuide" hidden>
         <h3>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14h-2v-2h2zm0-4h-2V7h2z"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
           How to add to your iPhone screen:
         </h3>
         <ol class="ios-steps">
           <li>At the bottom of Safari, tap the <b>Share</b> button <span class="share-icon" aria-hidden="true"></span>.</li>
           <li>Scroll down and tap <b>Add to Home Screen ➕</b>.</li>
-          <li>Tap <b>Add</b> in the top-right corner.</li>
+          <li>Tap <b>Add</b> in the top-right corner. Done!</li>
         </ol>
       </div>
 
-      <!-- Android manual fallback notice if prompt doesn't fire -->
+      <!-- Android manual fallback notice -->
       <p id="androidManualTxt" style="font-size:14px;color:var(--muted);margin:14px 0 0" hidden>
-        In Chrome, tap the <b>three dots (⋮)</b> in the top right corner and choose <b>“Install app”</b> or <b>“Add to Home screen”</b>.
+        In Chrome, tap the <b>three dots (⋮)</b> in the top right and choose <b>“Install app”</b> or <b>“Add to Home screen”</b>.
       </p>
 
-      <a class="pill line" href="/">Or open web version in browser →</a>
+      <a class="pill line" id="bOpenBrowser" href="/#/lesson/1">Or open Course 1 in browser now →</a>
     </div>
 
-    <!-- Highlights -->
-    <div class="highlights">
-      <h3>What’s inside</h3>
-      <ul class="feature-list">
-        <li><i>✓</i> <div><b>10 Video Lessons with Charlotte</b><br><span style="color:var(--muted)">1080p demonstration drills for Name Recognition, Sit, Stay, Come, and more.</span></div></li>
-        <li><i>✓</i> <div><b>Built-in 5-Minute Video Review</b><br><span style="color:var(--muted)">Film yourself and your dog practicing, and send it to Charlotte for feedback.</span></div></li>
-        <li><i>✓</i> <div><b>No App Store account needed</b><br><span style="color:var(--muted)">Instant installation that takes zero phone storage and updates automatically.</span></div></li>
-      </ul>
+    <div style="margin-top:20px;text-align:center">
+      <a href="javascript:void(0)" id="bStartOver" style="font-size:13.5px;color:var(--muted)">Not your details? Register a different box</a>
     </div>
-  </div>
+  </section>
+
 </div></main>
 
 <div class="foot">
@@ -239,13 +312,19 @@ main{margin-top:-60px;padding:0 18px 48px;flex:1}
   Treats are for intermittent or supplemental feeding only. For dogs.
 </div>
 
-<div class="toast" id="toast" hidden></div>
+<div class="toast" id="toast" role="status" hidden></div>
 
 <script>
 const $ = (id) => document.getElementById(id);
+const TERMS_VERSION = 'draft-2';
+const REGISTER_URL = '/api/register';
+const AGES = ['Under 3 months', '3 to 6 months', '6 to 12 months', 'Over 12 months'];
+let selectedAge = '';
+
 const store = {
-  get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
-  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  get(k, d) { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} }
 };
 
 const isStandalone = () => (window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
@@ -261,11 +340,9 @@ function toast(msg, ms) {
   toast.h = setTimeout(() => { t.hidden = true; }, ms || 3500);
 }
 
-// Check if already installed
+// Check installation
 async function checkInstalled() {
-  if (isStandalone() || store.get('fidara_install_done') === 1) {
-    return true;
-  }
+  if (isStandalone() || store.get('fidara_install_done') === 1) return true;
   if ('getInstalledRelatedApps' in navigator) {
     try {
       const apps = await navigator.getInstalledRelatedApps();
@@ -275,59 +352,167 @@ async function checkInstalled() {
   return false;
 }
 
-function renderState(installed) {
-  if (installed) {
-    $('installedState').hidden = false;
-    $('installState').hidden = true;
-  } else {
-    $('installedState').hidden = true;
-    $('installState').hidden = false;
+// Render age selection chips
+AGES.forEach(a => {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'chip';
+  b.textContent = a;
+  b.setAttribute('aria-pressed', 'false');
+  b.onclick = () => {
+    selectedAge = a;
+    [...$('ages').children].forEach(c => c.setAttribute('aria-pressed', String(c === b)));
+  };
+  $('ages').appendChild(b);
+});
 
-    if (isIOS) {
-      $('downloadBtn').hidden = true;
-      $('iosGuide').hidden = false;
-      $('androidManualTxt').hidden = true;
-    } else {
-      $('downloadBtn').hidden = false;
-      $('iosGuide').hidden = true;
-      if (!installEvt) {
-        $('androidManualTxt').hidden = false;
-      }
-    }
+// ZIP validation input
+$('rZip').addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 5); });
+
+// Update UI between Step 1 (Register) and Step 2 (Download)
+function showStep(step) {
+  if (step === 'register') {
+    $('stepPill').textContent = 'Step 1 of 2 · Registration';
+    $('headerTitle').innerHTML = 'Register your <em class="serif">Fidara</em> box';
+    $('headerSub').textContent = 'Register once to activate your 10 courses, then download the app icon to your phone.';
+    $('stepRegister').hidden = false;
+    $('stepInstall').hidden = true;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    $('stepPill').textContent = 'Step 2 of 2 · Download Icon';
+    $('headerTitle').innerHTML = 'Add <em class="serif">Fidara</em> to your phone';
+    $('headerSub').textContent = 'Your courses are ready. Put the icon on your screen so training is just one tap away.';
+    $('stepRegister').hidden = true;
+    $('stepInstall').hidden = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    updateInstallState();
   }
 }
 
-// Listen for PWA beforeinstallprompt (Android / Chrome / Edge / Desktop)
+async function updateInstallState() {
+  const installed = await checkInstalled();
+  if (installed) {
+    $('boxInstalled').hidden = false;
+    $('boxNotInstalled').hidden = true;
+  } else {
+    $('boxInstalled').hidden = true;
+    $('boxNotInstalled').hidden = false;
+
+    if (isIOS) {
+      $('bDownloadIcon').hidden = true;
+      $('iosGuide').hidden = false;
+      $('androidManualTxt').hidden = true;
+    } else {
+      $('bDownloadIcon').hidden = false;
+      $('iosGuide').hidden = true;
+      if (!installEvt) $('androidManualTxt').hidden = false;
+    }
+  }
+
+  const reg = store.get('fidara_reg', null);
+  if (reg && reg.name) {
+    $('regSuccessDetail').textContent = (reg.dog || 'Your puppy') + '’s 10 courses are activated. A return link was emailed to ' + reg.email + '.';
+    $('bOpenInstalled').textContent = 'Start Course 1: Name recognition with ' + (reg.dog || 'puppy') + ' →';
+  }
+}
+
+// Registration Form Submission
+$('regForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const f = {
+    name: $('rName').value.trim(),
+    email: $('rEmail').value.trim(),
+    dog: $('rDog').value.trim(),
+    receipt: $('rReceipt').value.trim(),
+    zip: $('rZip').value.trim()
+  };
+
+  const err = !f.name ? 'Please enter your full name.'
+    : !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email) ? 'Please enter a valid email address.'
+    : !f.dog ? 'Please enter your puppy’s name.'
+    : !/^\d{5}$/.test(f.zip) ? 'Please enter your 5-digit ZIP code.'
+    : !selectedAge ? 'Please select your puppy’s age.'
+    : f.receipt.length < 3 ? 'Please enter the receipt or order number from your box.'
+    : !$('rConsent').checked ? 'Please tick the authorization checkbox to register.' : '';
+
+  $('regErr').innerHTML = '';
+  if (err) {
+    const d = document.createElement('div');
+    d.className = 'msg err';
+    d.textContent = err;
+    $('regErr').appendChild(d);
+    return;
+  }
+
+  $('bSubmitReg').disabled = true;
+  $('bSubmitReg').textContent = 'Registering your box…';
+
+  const regData = Object.assign(f, {
+    age: selectedAge,
+    estoyAqui: true,
+    consent: true,
+    termsVersion: TERMS_VERSION,
+    marketing: $('rMarketing').checked,
+    at: new Date().toISOString()
+  });
+
+  try {
+    const r = await fetch(REGISTER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(regData)
+    });
+
+    if (r.status === 429) throw new Error('Too many attempts. Please try again later.');
+    if (!r.ok) throw new Error('Could not register. Please check your form details.');
+
+    const j = await r.json();
+    regData.synced = true;
+    store.set('fidara_reg', regData);
+    if (j.token) store.set('fidara_token', j.token);
+
+    toast('🎉 Welcome, ' + f.name + '! Box registered successfully.', 4000);
+    showStep('install');
+  } catch (err) {
+    // If offline or network error, save locally so customer is not blocked
+    regData.synced = false;
+    store.set('fidara_reg', regData);
+    toast('Saved on this phone! Let’s add the app icon.', 4000);
+    showStep('install');
+  } finally {
+    $('bSubmitReg').disabled = false;
+    $('bSubmitReg').textContent = 'Register & Continue to App Download →';
+  }
+});
+
+// PWA install prompt handler
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   installEvt = e;
   $('androidManualTxt').hidden = true;
-  $('downloadBtn').hidden = false;
+  $('bDownloadIcon').hidden = false;
 });
 
-// Listen for successful installation
 window.addEventListener('appinstalled', () => {
   installEvt = null;
   store.set('fidara_install_done', 1);
-  renderState(true);
+  updateInstallState();
   toast('🎉 Icon downloaded! Fidara is now on your home screen.');
 });
 
-// Click download button
-$('downloadBtn').onclick = async () => {
+$('bDownloadIcon').onclick = async () => {
   if (installEvt) {
     installEvt.prompt();
     try {
       const { outcome } = await installEvt.userChoice;
       if (outcome === 'accepted') {
         store.set('fidara_install_done', 1);
-        renderState(true);
+        updateInstallState();
         toast('🎉 Icon downloaded! Open Fidara from your home screen.');
       }
     } catch (e) {}
     installEvt = null;
   } else {
-    // If beforeinstallprompt hasn't fired yet or browser doesn't support programmatic prompt
     if (isIOS) {
       $('iosGuide').hidden = false;
     } else {
@@ -337,22 +522,37 @@ $('downloadBtn').onclick = async () => {
   }
 };
 
-$('reinstallBtn').onclick = () => {
+$('bReinstall').onclick = () => {
   store.set('fidara_install_done', 0);
-  renderState(false);
+  updateInstallState();
+};
+
+$('linkSkipToInstall').onclick = () => {
+  showStep('install');
+};
+
+$('bStartOver').onclick = () => {
+  store.del('fidara_reg');
+  store.del('fidara_token');
+  store.del('fidara_install_done');
+  $('regForm').reset();
+  selectedAge = '';
+  [...$('ages').children].forEach(c => c.setAttribute('aria-pressed', 'false'));
+  showStep('register');
 };
 
 // Register Service Worker
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
-  });
+  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
 }
 
-// Initial detection
-checkInstalled().then(installed => {
-  renderState(installed);
-});
+// Initial state check
+const existingReg = store.get('fidara_reg', null);
+if (existingReg && existingReg.name && existingReg.email) {
+  showStep('install');
+} else {
+  showStep('register');
+}
 </script>
 </body>
 </html>

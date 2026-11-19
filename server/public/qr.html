@@ -66,7 +66,7 @@ const $ = (id) => document.getElementById(id);
 const guess = () => { const p = location.href.split('#')[0].split('?')[0].replace(/qr\.html$/, ''); return /^https?:/.test(p) ? p : 'https://YOUR-FIDARA-APP.example/'; };
 $('u').value = new URLSearchParams(location.search).get('url') || guess();
 const base = () => { let u = $('u').value.trim(); if (!/^https?:\/\//.test(u)) u = 'https://' + u; return u.split('#')[0]; };
-const joinUrl = () => base().replace(/\/?$/, '/') + 'join';
+const installUrl = () => base().replace(/\/?$/, '/') + 'install';
 function make() {
   const b = base();
   $('warn').innerHTML = '';
@@ -75,7 +75,7 @@ function make() {
     w.textContent = 'Enter the final public https address of the hosted app before printing. The camera only works on https, and printed codes cannot be changed.';
     $('warn').appendChild(w);
   }
-  const j = joinUrl(); // the box code opens the sign-up form
+  const j = installUrl(); // the box code opens the register & install page
   $('mainCode').innerHTML = FidaraQR.svg(j, { level: 'M' }); $('mainUrl').textContent = j;
   $('grid').innerHTML = '';
   NAMES.forEach((n, i) => {
@@ -87,9 +87,9 @@ function make() {
 }
 function download(name, href) { const a = document.createElement('a'); a.href = href; a.download = name; document.body.appendChild(a); a.click(); a.remove(); }
 $('bMake').onclick = make; $('u').addEventListener('keydown', (e) => { if (e.key === 'Enter') make(); });
-$('bSvg').onclick = () => download('fidara-qr.svg', 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(FidaraQR.svg(joinUrl(), { level: 'M' })));
+$('bSvg').onclick = () => download('fidara-qr.svg', 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(FidaraQR.svg(installUrl(), { level: 'M' })));
 $('bPng').onclick = () => {
-  const q = FidaraQR.encode(joinUrl(), 'M'), scale = 24, n = q.size + 8, c = document.createElement('canvas'); c.width = c.height = n * scale;
+  const q = FidaraQR.encode(installUrl(), 'M'), scale = 24, n = q.size + 8, c = document.createElement('canvas'); c.width = c.height = n * scale;
   const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.fillStyle = '#000';
   for (let y = 0; y < q.size; y++) for (let x = 0; x < q.size; x++) if (q.get(x, y)) g.fillRect((x + 4) * scale, (y + 4) * scale, scale, scale);
   download('fidara-qr.png', c.toDataURL('image/png'));
