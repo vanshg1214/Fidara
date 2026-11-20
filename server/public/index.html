@@ -714,10 +714,15 @@ function courseCard(i, nextUp) {
 }
 function renderHome() {
   const next = nextUpN();
-  $('register').hidden = !!reg; $('dash').hidden = !reg;
-  $('topCta').textContent = reg ? 'My courses' : 'Register'; $('topCta').href = reg ? '#courses' : '#register';
-  $('heroCta').textContent = reg ? (done.length ? 'Continue: course ' + (next || 10) : 'Start course 1') : 'Register to start';
-  $('heroCta').href = reg ? '#/lesson/' + (next || 1) : '#register';
+  const inApp = isStandalone();
+  $('register').hidden = inApp || !!reg;
+  $('dash').hidden = !reg && !inApp;
+  if (inApp && !reg) {
+    $('dash').innerHTML = '<div class="wrap"><div class="card" style="padding:32px;text-align:center;border-radius:24px"><h2 style="margin:0 0 10px;font-size:24px">Welcome to Fidara</h2><p style="margin:0 0 22px;color:var(--muted)">To activate Charlotte’s 10 puppy training courses, please register your box.</p><a class="pill sun" href="/install" style="display:inline-flex">Register in Browser →</a></div></div>';
+  }
+  $('topCta').textContent = reg ? 'My courses' : 'Register'; $('topCta').href = reg ? '#courses' : '/install';
+  $('heroCta').textContent = reg ? (done.length ? 'Continue: course ' + (next || 10) : 'Start course 1') : 'Register & Download App';
+  $('heroCta').href = reg ? '#/lesson/' + (next || 1) : '/install';
   $('regLead').textContent = wantLesson ? 'Register once and course ' + wantLesson + ' (' + L[wantLesson - 1].n + ') opens right away. All 10 courses open at the same time.'
     : 'You found this code inside your Fidara box. Tell us about you and your puppy, and everything opens right away.';
   $('miniProg').hidden = !reg; paintInstall();
@@ -878,6 +883,7 @@ $('bDone').onclick = () => {
 
 /* ---------- router ---------- */
 function route() {
+  if (location.hash === '#register') { location.href = '/install'; return; }
   const bm = location.hash.match(/^#\/back\/([\w.-]+)/);
   if (bm) { restore(bm[1]); return; }
   const m = location.hash.match(/^#\/lesson\/(\d+)/);
@@ -892,12 +898,14 @@ function route() {
     }
     document.body.dataset.view = 'lesson'; $('vHome').hidden = true; $('vLesson').hidden = false; renderLesson(n); window.scrollTo(0, 0); return;
   }
-  if (n >= 1 && n <= 10 && !reg) wantLesson = n;
+  if (n >= 1 && n <= 10 && !reg) {
+    location.href = '/install';
+    return;
+  }
   stopStream(); document.title = 'Fidara Puppy Training'; document.body.dataset.view = 'home';
   $('vLesson').hidden = true; $('vHome').hidden = false;
   renderHome();
-  if (n && !reg) setTimeout(() => $('register').scrollIntoView(), 50);
-  else { const id = location.hash.slice(1); if (id && id[0] !== '/') setTimeout(() => { const t = $(id); if (t) t.scrollIntoView(); }, 30); else if (!n) window.scrollTo(0, 0); }
+  const id = location.hash.slice(1); if (id && id[0] !== '/') setTimeout(() => { const t = $(id); if (t) t.scrollIntoView(); }, 30); else if (!n) window.scrollTo(0, 0);
 }
 window.addEventListener('hashchange', route);
 
@@ -1026,7 +1034,7 @@ window.addEventListener('beforeunload', e => { if (mode === 'recording') { e.pre
 if (!window.isSecureContext) { $('fbTitle').textContent = 'The live camera needs a secure (https) page.'; }
 
 /* ---------- add to home screen ---------- */
-const isStandalone = () => (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+const isStandalone = () => (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true || location.search.includes('source=pwa');
 const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 let installEvt = null;
 window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; paintInstall(); });
