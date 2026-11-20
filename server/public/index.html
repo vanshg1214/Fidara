@@ -63,6 +63,7 @@ body[data-view=lesson] .nav{display:none}
 .who{display:flex;align-items:center;gap:10px}
 .mini-ring{display:flex;align-items:center;gap:8px;font-family:'Poppins',sans-serif;font-weight:700;font-size:13px;color:var(--pale);text-decoration:none}
 @media(max-width:760px){.nav{display:none}.brand{font-size:21px}}
+.top-alert{background:#8A4A00;border-bottom:1px solid rgba(255,255,255,.2);color:#fff;position:relative;z-index:15}
 
 /* hero */
 .hero{position:relative;overflow:hidden;color:#fff;background:
@@ -314,6 +315,17 @@ textarea.in{min-height:84px;resize:vertical}
   <nav class="nav" aria-label="Sections"><a href="#courses">Courses</a><a href="#how">How it works</a><a href="#trainer">Your trainer</a><a href="#faq">FAQ</a></nav>
   <div class="who"><span class="mini-ring" id="miniProg" hidden></span><a class="pill sun small" id="topCta" href="#register">Register</a></div>
 </div></header>
+<div class="top-alert" id="pwaNotInstalledNotice" hidden>
+  <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding-block:10px">
+    <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:#fff">
+      <span style="font-size:18px">⚠️</span>
+      <span><b>App not installed:</b> You are viewing in a web browser. Add Fidara to your home screen for 1-tap puppy training.</span>
+    </div>
+    <div style="display:flex;gap:8px">
+      <a class="pill sun small" href="/install" style="font-size:13px;padding:6px 14px;min-height:36px">How to Install →</a>
+    </div>
+  </div>
+</div>
 
 <main id="main">
 <!-- ================= HOME ================= -->
@@ -726,6 +738,7 @@ function renderHome() {
   $('regLead').textContent = wantLesson ? 'Register once and course ' + wantLesson + ' (' + L[wantLesson - 1].n + ') opens right away. All 10 courses open at the same time.'
     : 'You found this code inside your Fidara box. Tell us about you and your puppy, and everything opens right away.';
   $('miniProg').hidden = !reg; paintInstall();
+  if ($('pwaNotInstalledNotice')) $('pwaNotInstalledNotice').hidden = inApp;
   if (reg) $('miniProg').innerHTML = ringSvg(done.length, 26, 4).replace('#E7EFE9', 'rgba(255,255,255,.2)') + '<span>' + done.length + '/10</span>';
   if (reg) {
     $('ring').innerHTML = ringSvg(done.length, 104, 11) + '<b>' + done.length + '<small>/10</small></b>';
@@ -896,7 +909,9 @@ function route() {
       location.hash = '#/lesson/' + curNext;
       return;
     }
-    document.body.dataset.view = 'lesson'; $('vHome').hidden = true; $('vLesson').hidden = false; renderLesson(n); window.scrollTo(0, 0); return;
+    document.body.dataset.view = 'lesson'; $('vHome').hidden = true; $('vLesson').hidden = false;
+    if ($('pwaNotInstalledNotice')) $('pwaNotInstalledNotice').hidden = isStandalone();
+    renderLesson(n); window.scrollTo(0, 0); return;
   }
   if (n >= 1 && n <= 10 && !reg) {
     location.href = '/install';

@@ -139,16 +139,39 @@ label.f{display:block;font-family:'Poppins',sans-serif;font-weight:600;font-size
 .status-banner.installed b{display:block;font-size:16px;font-family:'Poppins',sans-serif}
 .status-banner.installed p{margin:2px 0 0;font-size:14px;color:#28633B}
 
-/* iOS instructions */
-.ios-box{
+.status-banner.not-installed{
+  background:#FFF7E6;border:2px solid #F5B942;color:#7A4C00;
+}
+.status-banner.not-installed .sb-icon{
+  width:44px;height:44px;border-radius:50%;background:#E59819;color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:22px;flex:none;
+}
+.status-banner.not-installed b{display:block;font-size:16px;font-family:'Poppins',sans-serif;color:#5E3800}
+.status-banner.not-installed p{margin:2px 0 0;font-size:14px;color:#7A4C00}
+
+/* Instruction tabs */
+.inst-tabs{display:flex;gap:6px;margin:8px 0 14px;flex-wrap:wrap}
+.inst-tab{
+  flex:1 1 auto;background:#fff;border:1.5px solid #CBD3C7;border-radius:999px;
+  padding:8px 14px;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;
+  transition:all .15s;text-align:center;
+}
+.inst-tab.active{background:var(--forest);color:#fff;border-color:var(--forest)}
+
+/* Instruction box */
+.inst-box{
   background:var(--mint);border:1px solid #D0DFC9;border-radius:20px;
-  padding:18px;margin-top:20px;text-align:left;
+  padding:18px;margin-top:12px;text-align:left;
 }
-.ios-box h3{
-  font-size:15.5px;margin:0 0 10px;display:flex;align-items:center;gap:8px;color:var(--deep);
+.inst-box h3{
+  font-size:15px;margin:0 0 10px;display:flex;align-items:center;gap:8px;color:var(--deep);
 }
-.ios-steps{margin:0;padding-left:20px;font-size:14.5px;color:var(--ink)}
-.ios-steps li{margin-bottom:8px;line-height:1.4}
+.inst-steps{margin:0;padding-left:20px;font-size:14px;color:var(--ink)}
+.inst-steps li{margin-bottom:8px;line-height:1.45}
+.inst-tip{
+  margin-top:12px;padding:10px 12px;background:#fff;border-radius:12px;
+  font-size:13px;color:var(--muted);border:1px solid #DCE6D9;line-height:1.4;
+}
 .share-icon{
   display:inline-block;vertical-align:middle;width:18px;height:18px;
   border:2px solid var(--forest);border-radius:4px;position:relative;margin:0 2px;
@@ -279,9 +302,12 @@ label.f{display:block;font-family:'Poppins',sans-serif;font-weight:600;font-size
 
     <!-- STATE B: Icon Ready to Download -->
     <div id="boxNotInstalled">
-      <div style="margin-bottom:18px">
-        <h3 style="font-size:18px;margin:0 0 6px">Add icon to your phone screen</h3>
-        <p style="margin:0;font-size:14.5px;color:var(--muted)">Put Fidara on your home screen for quick 1-tap access during training. No app store download needed.</p>
+      <div class="status-banner not-installed">
+        <div class="sb-icon">⚠️</div>
+        <div>
+          <b>App is not installed yet</b>
+          <p>Fidara app icon is not on your device yet. Follow the steps below to install it so you can open your courses with 1 tap.</p>
+        </div>
       </div>
 
       <!-- Android / Chrome / Desktop PWA Trigger -->
@@ -290,25 +316,58 @@ label.f{display:block;font-family:'Poppins',sans-serif;font-weight:600;font-size
         Download App Icon
       </button>
 
+      <!-- Platform Selection Tabs -->
+      <div style="margin:22px 0 10px;text-align:left">
+        <label class="f" style="font-size:13.5px;color:var(--muted)">Installation instructions for:</label>
+        <div class="inst-tabs" role="tablist">
+          <button class="inst-tab active" id="tabIos" type="button">📱 iPhone / iPad</button>
+          <button class="inst-tab" id="tabAndroid" type="button">🤖 Android Phone</button>
+          <button class="inst-tab" id="tabDesktop" type="button">💻 Computer / Mac</button>
+        </div>
+      </div>
+
       <!-- iOS Safari Instructions -->
-      <div class="ios-box" id="iosGuide" hidden>
+      <div class="inst-box" id="guideIos">
         <h3>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-          How to add to your iPhone screen:
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          How to install on iPhone & iPad (Safari):
         </h3>
-        <ol class="ios-steps">
+        <ol class="inst-steps">
           <li>At the bottom of Safari, tap the <b>Share</b> button <span class="share-icon" aria-hidden="true"></span>.</li>
-          <li>Scroll down and tap <b>Add to Home Screen ➕</b>.</li>
-          <li>Tap <b>Add</b> in the top-right corner. Done!</li>
+          <li>Scroll down the menu and tap <b>Add to Home Screen ➕</b>.</li>
+          <li>Tap <b>Add</b> in the top-right corner. The Fidara icon will appear on your screen!</li>
+        </ol>
+        <div class="inst-tip">💡 <b>Note:</b> Apple requires using Safari to add web apps to your iPhone home screen.</div>
+      </div>
+
+      <!-- Android Instructions -->
+      <div class="inst-box" id="guideAndroid" hidden>
+        <h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          How to install on Android (Chrome / Samsung):
+        </h3>
+        <ol class="inst-steps">
+          <li>Tap the yellow <b>“Download App Icon”</b> button above.</li>
+          <li>If the prompt doesn't appear, tap the <b>three dots (⋮)</b> in the top-right corner of Chrome.</li>
+          <li>Select <b>“Install app”</b> or <b>“Add to Home screen”</b>.</li>
+          <li>Tap <b>Install</b> to confirm. Fidara is now installed!</li>
         </ol>
       </div>
 
-      <!-- Android manual fallback notice -->
-      <p id="androidManualTxt" style="font-size:14px;color:var(--muted);margin:14px 0 0" hidden>
-        In Chrome, tap the <b>three dots (⋮)</b> in the top right and choose <b>“Install app”</b> or <b>“Add to Home screen”</b>.
-      </p>
+      <!-- Desktop Instructions -->
+      <div class="inst-box" id="guideDesktop" hidden>
+        <h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          How to install on Computer (Chrome / Edge):
+        </h3>
+        <ol class="inst-steps">
+          <li>Look at the right side of your browser address bar (where the web address is).</li>
+          <li>Click the <b>Install</b> icon <span style="font-size:16px;font-weight:900">⊕</span> or computer icon.</li>
+          <li>Or click Chrome’s menu <b>(⋮)</b> → <b>“Install Fidara Puppy Training…”</b>.</li>
+        </ol>
+      </div>
 
-      <a class="pill line" id="bOpenBrowser" href="/#/lesson/1">Or open Course 1 in browser now →</a>
+      <a class="pill line" id="bOpenBrowser" href="/#/lesson/1" style="margin-top:16px">Or open Course 1 in browser now →</a>
     </div>
 
     <div style="margin-top:20px;text-align:center">
@@ -338,8 +397,9 @@ const store = {
   del(k) { try { localStorage.removeItem(k); } catch (e) {} }
 };
 
-const isStandalone = () => (window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+const isStandalone = () => (window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true || location.search.includes('source=pwa');
 const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const isAndroid = /android/i.test(navigator.userAgent);
 
 let installEvt = null;
 
@@ -353,13 +413,22 @@ function toast(msg, ms) {
 
 // Check installation
 async function checkInstalled() {
-  if (isStandalone() || store.get('fidara_install_done') === 1) return true;
+  if (isStandalone()) return true;
+  if (installEvt) {
+    store.del('fidara_install_done');
+    return false;
+  }
   if ('getInstalledRelatedApps' in navigator) {
     try {
       const apps = await navigator.getInstalledRelatedApps();
       if (apps && apps.length > 0) return true;
+      if (apps && apps.length === 0) {
+        store.del('fidara_install_done');
+        return false;
+      }
     } catch (e) {}
   }
+  if (store.get('fidara_install_done') === 1) return true;
   return false;
 }
 
@@ -400,6 +469,18 @@ function showStep(step) {
   }
 }
 
+function setTab(name) {
+  if ($('tabIos')) $('tabIos').classList.toggle('active', name === 'ios');
+  if ($('tabAndroid')) $('tabAndroid').classList.toggle('active', name === 'android');
+  if ($('tabDesktop')) $('tabDesktop').classList.toggle('active', name === 'desktop');
+  if ($('guideIos')) $('guideIos').hidden = name !== 'ios';
+  if ($('guideAndroid')) $('guideAndroid').hidden = name !== 'android';
+  if ($('guideDesktop')) $('guideDesktop').hidden = name !== 'desktop';
+}
+if ($('tabIos')) $('tabIos').onclick = () => setTab('ios');
+if ($('tabAndroid')) $('tabAndroid').onclick = () => setTab('android');
+if ($('tabDesktop')) $('tabDesktop').onclick = () => setTab('desktop');
+
 async function updateInstallState() {
   const installed = await checkInstalled();
   if (installed) {
@@ -410,13 +491,14 @@ async function updateInstallState() {
     $('boxNotInstalled').hidden = false;
 
     if (isIOS) {
+      setTab('ios');
       $('bDownloadIcon').hidden = true;
-      $('iosGuide').hidden = false;
-      $('androidManualTxt').hidden = true;
-    } else {
+    } else if (isAndroid) {
+      setTab('android');
       $('bDownloadIcon').hidden = false;
-      $('iosGuide').hidden = true;
-      if (!installEvt) $('androidManualTxt').hidden = false;
+    } else {
+      setTab('desktop');
+      $('bDownloadIcon').hidden = !installEvt;
     }
   }
 
@@ -503,15 +585,16 @@ $('regForm').addEventListener('submit', async (e) => {
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   installEvt = e;
-  $('androidManualTxt').hidden = true;
+  store.del('fidara_install_done');
   $('bDownloadIcon').hidden = false;
+  updateInstallState();
 });
 
 window.addEventListener('appinstalled', () => {
   installEvt = null;
   store.set('fidara_install_done', 1);
   updateInstallState();
-  toast('🎉 Icon downloaded! Fidara is now on your home screen.');
+  toast('🎉 Icon installed! Fidara is now on your home screen.');
 });
 
 $('bDownloadIcon').onclick = async () => {
@@ -522,23 +605,25 @@ $('bDownloadIcon').onclick = async () => {
       if (outcome === 'accepted') {
         store.set('fidara_install_done', 1);
         updateInstallState();
-        toast('🎉 Icon downloaded! Open Fidara from your home screen.');
+        toast('🎉 Icon installed! Open Fidara from your home screen.');
       }
     } catch (e) {}
     installEvt = null;
   } else {
     if (isIOS) {
-      $('iosGuide').hidden = false;
+      setTab('ios');
+      toast('Follow the iPhone instructions below to add to Home Screen', 4000);
     } else {
-      $('androidManualTxt').hidden = false;
-      toast('Tap Chrome’s menu (⋮) and select "Install app" or "Add to Home screen"', 4500);
+      setTab('android');
+      toast('Tap Chrome’s menu (⋮) and choose "Install app" or "Add to Home screen"', 4500);
     }
   }
 };
 
 $('bReinstall').onclick = () => {
-  store.set('fidara_install_done', 0);
+  store.del('fidara_install_done');
   updateInstallState();
+  toast('Ready to reinstall. Follow the instructions below.');
 };
 
 $('linkSkipToInstall').onclick = () => {
